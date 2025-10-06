@@ -23,7 +23,6 @@ from agentlab.llm.llm_configs import CHAT_MODEL_ARGS_DICT
 
 from agentlab.agents.generic_agent.generic_agent import GenericAgent, GenericPromptFlags, GenericAgentArgs
 
-from webmall_overrides.filtered_generic_agent import FilteredGenericAgentArgs
 
 FLAGS_default = GenericPromptFlags(
     obs=dp.ObsFlags(
@@ -131,15 +130,19 @@ AGENT_GROK_4_FAST_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast:free"],
     flags=FLAGS_AX_M,
 )
-AGENT_DEEPSEEK_R1_AX = GenericAgentArgs(
+AGENT_DEEPSEEK_R1_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/deepseek-chat-v3.1:free"],
-    flags=FLAGS_AX,
+    flags=FLAGS_AX_M,
 )
 
-AGENT_GROK_4_FAST_AX_M_FILTERED = FilteredGenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast:free"],
+AGENT_Z_AI_GLM_4_5_AIR_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/z-ai/glm-4.5-air:free"],
     flags=FLAGS_AX_M,
-    enable_axtree_filter=True,
+)
+
+AGENT_GEMINI_2_5_FLASH = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_AX_M,
 )
 
 # example for a single task
@@ -155,14 +158,9 @@ env_args = EnvArgsWebMall(
 
 #agent = AGENT_41_AX
 #agent = AGENT_LLAMA3_70B
-agent = AGENT_GROK_4_FAST_AX_M_FILTERED
-#agent = AGENT_DEEPSEEK_R1_AX
+#agent = AGENT_GROK_4_FAST_AX_M
+agent = AGENT_GEMINI_2_5_FLASH
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
-
-#chat_model_args = CHAT_MODEL_ARGS_DICT["openrouter/meta-llama/llama-3-70b-instruct"]
-#chat_model_args = CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"]
-#chat_model_args = CHAT_MODEL_ARGS_DICT["anthropic/claude-sonnet-4-20250514"]
-#chat_model_args = CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast:free"]
 
 exp_args = [
     ExpArgsWebMall(
