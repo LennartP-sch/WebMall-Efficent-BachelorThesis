@@ -79,7 +79,19 @@ FLAGS_AX_V.obs.use_som = True
 
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
-FLAGS_AX_M.extra_instructions = 'Use your memory to note down important information like the URLs of potential solutions and corresponding pricing information.'
+FLAGS_AX_M.extra_instructions = (
+    'Use your memory to note down important information like the URLs of potential solutions and corresponding pricing information. '
+    '**CRITICAL: You must output EXACTLY ONE action per response. Never output multiple actions.**'
+)
+FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
+FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
+FLAGS_AX_M.extra_instructions = 'Use your memory to note down important information like the URLs of potential solutions and corresponding pricing information. In the accesibility tree tab was replaced by "~", this shows you the element hierarchy. SO ~ EQUALS \t !'
+
+FLAGS_HTML = FLAGS_default.copy()
+FLAGS_HTML.obs.use_html = True 
+FLAGS_HTML.obs.use_prune_advanced = True
+FLAGS_HTML.obs.use_ax_tree = False
+#FLAGS_HTML.extra_instructions = ("YOU HAVE ONLY 30 STEPS TO COMPLETE THE TASK, PLAN ACCORDINGLY. IF YOU EXCEED 30 STEPS, THE TASK WILL END AUTOMATICALLY WITH NO SUBMITTED ANSWER. SO SUBMIT YOUR BEST POSSIBLE ANSWER IN STEP 30. Always answer only with one <action> xxx </action> tag, never multiple action tags. ")
 
 AGENT_41_AX = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
@@ -140,14 +152,27 @@ AGENT_Z_AI_GLM_4_5_AIR_AX_M = GenericAgentArgs(
     flags=FLAGS_AX_M,
 )
 
-AGENT_GEMINI_2_5_FLASH = GenericAgentArgs(
+AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
     flags=FLAGS_AX_M,
 )
 
+AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_AX_ADV_M,
+)
+
+AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_HTML
+)
+
+#webmall.Webmall_Cheapest_Offer_Vague_Requirements_Task1_15
+#Webmall_Cheapest_Offer_Specific_Requirements_Task3
+
 # example for a single task
 env_args = EnvArgsWebMall(
-    task_name="webmall.Webmall_Find_Specific_Product_Task1",
+    task_name="webmall.Webmall_Cheapest_Offer_Specific_Requirements_Task3",
     task_seed=0,
     max_steps=30,
     headless=True,
@@ -159,7 +184,10 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_41_AX
 #agent = AGENT_LLAMA3_70B
 #agent = AGENT_GROK_4_FAST_AX_M
-agent = AGENT_GEMINI_2_5_FLASH
+#agent = AGENT_GEMINI_2_5_FLASH_AX_M
+#agent = AGENT_GEMINI_2_5_FLASH_AX_ADV_M
+agent = AGENT_GEMINI_2_5_FLASH_HTML
+
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 
 exp_args = [

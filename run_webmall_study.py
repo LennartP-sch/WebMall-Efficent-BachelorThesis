@@ -25,7 +25,7 @@ from agentlab.agents import dynamic_prompting as dp
 
 from agentlab.llm.llm_configs import CHAT_MODEL_ARGS_DICT
 
-from agentlab.agents.generic_agent.generic_agent import GenericAgent, GenericPromptFlags, GenericAgentArgs
+from agentlab.agents.generic_agent.generic_agent import  GenericPromptFlags, GenericAgentArgs
 
 FLAGS_default = GenericPromptFlags(
     obs=dp.ObsFlags(
@@ -80,7 +80,14 @@ FLAGS_AX_V.obs.use_som = True
 
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
-FLAGS_AX_M.extra_instructions = 'Use your memory to note down important information like the URLs of potential solutions and corresponding pricing information.'
+
+FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
+FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
+#FLAGS_AX_ADV_M.extra_instructions = "In the accessibility tree, the '\\t' (tab) characters have been replaced with '~' characters. Whenever you see '~', it has the same meaning as a '\\t' (tab) - it represents indentation and hierarchical structure in the tree."
+
+FLAGS_HTML = FLAGS_default.copy()
+FLAGS_HTML.obs.use_html = True
+FLAGS_HTML.obs.use_ax_tree = False
 
 AGENT_41_AX = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
@@ -121,10 +128,36 @@ AGENT_CLAUDE_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["anthropic/claude-sonnet-4-20250514"],
     flags=FLAGS_AX_M,
 )
-AGENT_GROK_4_FAST_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast:free"],
+AGENT_GROK_4_FAST_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_ADV_M,
+)
+AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
     flags=FLAGS_AX_M,
 )
+
+AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_AX_ADV_M,
+)
+
+AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_HTML,
+)
+
+FLAGS_HTML.obs.use_prune_advanced = True
+
+AGENT_GEMINI_2_5_FLASH_ADV_HTML = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_HTML,
+)
+
+AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_M
+) 
 
 current_file = Path(__file__).resolve()
 PATH_TO_DOT_ENV_FILE = current_file.parent / ".env"
@@ -132,13 +165,14 @@ load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GROK_4_FAST_AX_M]
+agent_args = [AGENT_GROK_4_FAST_AX_ADV_M]
 
 # ## select the benchmark to run on
 
 #benchmark = "webmall_v0.7"
 #benchmark = "webmall_basic_v0.7"
 benchmark = "webmall_advanced_v0.7"
+#benchmark = "webmall_test_short1"
 
 # Set reproducibility_mode = True for reproducibility
 # this will "ask" agents to be deterministic. Also, it will prevent you from launching if you have
@@ -150,7 +184,7 @@ reproducibility_mode = False
 relaunch = False
 
 ## Number of parallel jobs
-n_jobs = 2  # Make sure to use 1 job when debugging in VSCode
+n_jobs = -1  # Make sure to use 1 job when debugging in VSCode
 # n_jobs = -1  # to use all available cores
 
 
