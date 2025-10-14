@@ -83,7 +83,7 @@ FLAGS_AX_M.use_memory = True
 
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
 FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
-#FLAGS_AX_ADV_M.extra_instructions = "In the accessibility tree, the '\\t' (tab) characters have been replaced with '~' characters. Whenever you see '~', it has the same meaning as a '\\t' (tab) - it represents indentation and hierarchical structure in the tree."
+FLAGS_AX_ADV_M.extra_instructions = "In the accessibility tree, the '\\t' (tab) characters have been replaced with '~' characters. Whenever you see '~', it has the same meaning as a '\\t' (tab) - it represents indentation and hierarchical structure in the tree."
 
 FLAGS_HTML = FLAGS_default.copy()
 FLAGS_HTML.obs.use_html = True
@@ -157,7 +157,15 @@ AGENT_GEMINI_2_5_FLASH_ADV_HTML = GenericAgentArgs(
 AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
     flags=FLAGS_AX_M
-) 
+)
+
+FLAGS_AX_COPY_M = FLAGS_AX_M.copy()
+FLAGS_AX_COPY_M.obs.use_ax_tree_amazon = True
+
+AGENT_GEMINI_2_5_FLASH_AX_COPY_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_AX_COPY_M,
+)
 
 current_file = Path(__file__).resolve()
 PATH_TO_DOT_ENV_FILE = current_file.parent / ".env"
@@ -165,7 +173,7 @@ load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GROK_4_FAST_AX_ADV_M]
+agent_args = [AGENT_GEMINI_2_5_FLASH_AX_COPY_M]
 
 # ## select the benchmark to run on
 
@@ -184,7 +192,7 @@ reproducibility_mode = False
 relaunch = False
 
 ## Number of parallel jobs
-n_jobs = -1  # Make sure to use 1 job when debugging in VSCode
+n_jobs = 6  # Make sure to use 1 job when debugging in VSCode
 # n_jobs = -1  # to use all available cores
 
 

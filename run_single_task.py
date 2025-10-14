@@ -26,6 +26,7 @@ from agentlab.agents.generic_agent.generic_agent import GenericAgent, GenericPro
 
 FLAGS_default = GenericPromptFlags(
     obs=dp.ObsFlags(
+        use_ax_tree_advanced= False,
         use_html=False,
         use_ax_tree=True,
         use_focused_element=True,
@@ -79,13 +80,12 @@ FLAGS_AX_V.obs.use_som = True
 
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
-FLAGS_AX_M.extra_instructions = (
-    'Use your memory to note down important information like the URLs of potential solutions and corresponding pricing information. '
-    '**CRITICAL: You must output EXACTLY ONE action per response. Never output multiple actions.**'
-)
+
+FLAGS_AX_COPY_M = FLAGS_AX_M.copy()
+FLAGS_AX_COPY_M.obs.use_ax_tree_amazon = True
+
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
-FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
-FLAGS_AX_M.extra_instructions = 'Use your memory to note down important information like the URLs of potential solutions and corresponding pricing information. In the accesibility tree tab was replaced by "~", this shows you the element hierarchy. SO ~ EQUALS \t !'
+#FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
 
 FLAGS_HTML = FLAGS_default.copy()
 FLAGS_HTML.obs.use_html = True 
@@ -139,7 +139,7 @@ AGENT_LLAMA3_70B = GenericAgentArgs(
 )
 
 AGENT_GROK_4_FAST_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast:free"],
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
     flags=FLAGS_AX_M,
 )
 AGENT_DEEPSEEK_R1_AX_M = GenericAgentArgs(
@@ -160,6 +160,16 @@ AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
 AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
     flags=FLAGS_AX_ADV_M,
+)
+
+AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_AX_M,
+)
+
+AGENT_GEMINI_2_5_FLASH_AX_COPY_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    flags=FLAGS_AX_COPY_M,
 )
 
 AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
@@ -186,7 +196,7 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_GROK_4_FAST_AX_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_ADV_M
-agent = AGENT_GEMINI_2_5_FLASH_HTML
+agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
 
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 
