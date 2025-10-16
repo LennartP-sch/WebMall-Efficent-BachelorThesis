@@ -83,11 +83,16 @@ FLAGS_AX_M.use_memory = True
 
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
 FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
-FLAGS_AX_ADV_M.extra_instructions = "In the accessibility tree, the '\\t' (tab) characters have been replaced with '~' characters. Whenever you see '~', it has the same meaning as a '\\t' (tab) - it represents indentation and hierarchical structure in the tree."
 
 FLAGS_HTML = FLAGS_default.copy()
 FLAGS_HTML.obs.use_html = True
 FLAGS_HTML.obs.use_ax_tree = False
+
+FLAGS_HTML_ADV = FLAGS_HTML.copy()
+FLAGS_HTML_ADV.obs.use_prune_advanced = True
+
+FLAGS_AX_ADV2_M = FLAGS_AX_M.copy()
+FLAGS_AX_ADV2_M.obs.use_ax_tree_amazon = True
 
 AGENT_41_AX = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
@@ -132,39 +137,33 @@ AGENT_GROK_4_FAST_AX_ADV_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
     flags=FLAGS_AX_ADV_M,
 )
+AGENT_GROK_4_FAST_AX_ADV2_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_ADV2_M,
+)
 AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
     flags=FLAGS_AX_M,
 )
-
 AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
     flags=FLAGS_AX_ADV_M,
 )
-
 AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
     flags=FLAGS_HTML,
 )
-
-FLAGS_HTML.obs.use_prune_advanced = True
-
 AGENT_GEMINI_2_5_FLASH_ADV_HTML = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
-    flags=FLAGS_HTML,
+    flags=FLAGS_HTML_ADV,
 )
-
 AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
     flags=FLAGS_AX_M
 )
-
-FLAGS_AX_COPY_M = FLAGS_AX_M.copy()
-FLAGS_AX_COPY_M.obs.use_ax_tree_amazon = True
-
-AGENT_GEMINI_2_5_FLASH_AX_COPY_M = GenericAgentArgs(
+AGENT_GEMINI_2_5_FLASH_AX_ADV2_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
-    flags=FLAGS_AX_COPY_M,
+    flags=FLAGS_AX_ADV2_M,
 )
 
 current_file = Path(__file__).resolve()
@@ -173,13 +172,13 @@ load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GEMINI_2_5_FLASH_AX_COPY_M]
+agent_args = [AGENT_GROK_4_FAST_AX_ADV2_M]
 
 # ## select the benchmark to run on
 
 #benchmark = "webmall_v0.7"
-#benchmark = "webmall_basic_v0.7"
-benchmark = "webmall_advanced_v0.7"
+#benchmark = "webmall_basic_v1.0"
+benchmark = "webmall_advanced_v1.0"
 #benchmark = "webmall_test_short1"
 
 # Set reproducibility_mode = True for reproducibility
