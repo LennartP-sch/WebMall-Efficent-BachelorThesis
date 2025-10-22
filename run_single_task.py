@@ -142,6 +142,12 @@ AGENT_GROK_4_FAST_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
     flags=FLAGS_AX_M,
 )
+
+AGENT_GROK_4_FAST_AMZ_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_COPY_M,
+)
+
 AGENT_DEEPSEEK_R1_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/deepseek-chat-v3.1:free"],
     flags=FLAGS_AX_M,
@@ -162,11 +168,6 @@ AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
     flags=FLAGS_AX_ADV_M,
 )
 
-AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
-    flags=FLAGS_AX_M,
-)
-
 AGENT_GEMINI_2_5_FLASH_AX_COPY_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
     flags=FLAGS_AX_COPY_M,
@@ -182,7 +183,7 @@ AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
 
 # example for a single task
 env_args = EnvArgsWebMall(
-    task_name="webmall.Webmall_Cheapest_Offer_Specific_Requirements_Task3",
+    task_name="webmall.Webmall_Find_Specific_Product_Task5",
     task_seed=0,
     max_steps=30,
     headless=True,
@@ -194,9 +195,10 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_41_AX
 #agent = AGENT_LLAMA3_70B
 #agent = AGENT_GROK_4_FAST_AX_M
-#agent = AGENT_GEMINI_2_5_FLASH_AX_M
+#agent = AGENT_GROK_4_FAST_AMZ_AX_M
+agent = AGENT_GEMINI_2_5_FLASH_AX_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_ADV_M
-agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
+#agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
 
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 
