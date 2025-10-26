@@ -84,6 +84,9 @@ FLAGS_AX_M.use_memory = True
 FLAGS_AX_COPY_M = FLAGS_AX_M.copy()
 FLAGS_AX_COPY_M.obs.use_ax_tree_amazon = True
 
+FLAGS_AX_LLM_M = FLAGS_AX_M.copy()
+FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
+
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
 #FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
 
@@ -178,6 +181,16 @@ AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
     flags=FLAGS_HTML
 )
 
+AGENT_GEMINI_2_5_AX_LLM_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_LLM_M
+)
+
+AGENT_GEMINI_2_5_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_M
+)
+
 #webmall.Webmall_Cheapest_Offer_Vague_Requirements_Task1_15
 #Webmall_Cheapest_Offer_Specific_Requirements_Task3
 
@@ -196,9 +209,12 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_LLAMA3_70B
 #agent = AGENT_GROK_4_FAST_AX_M
 #agent = AGENT_GROK_4_FAST_AMZ_AX_M
-agent = AGENT_GEMINI_2_5_FLASH_AX_M
+#agent = AGENT_GEMINI_2_5_FLASH_AX_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_ADV_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
+#agent = AGENT_GEMINI_2_5_AX_LLM_M
+
+agent = AGENT_GEMINI_2_5_AX_M
 
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 
