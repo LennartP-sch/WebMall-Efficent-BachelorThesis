@@ -18,23 +18,16 @@ Supported APIs:
 
 SOTA -2k Tokens ist halt mega wenig
 TODO
-2. über prunner and die kummulierte token usage rankommen
-3. und dann mal gucken was mit dem prompt noch so geht - aber eigentlich eh eine dumme idee
+1. test machen
 
 """
 
-from typing import Optional, List, Tuple, Dict, Any
+import json
+import os
 import logging
 import re
-import os
-from openai import OpenAI
-
-
-import google.generativeai as genai
-
-
-from dotenv import load_dotenv
-load_dotenv()  # This loads .env file from current directory
+from typing import Optional, Dict, Tuple, List
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -69,11 +62,23 @@ class AuxModelPruner:
     def __init__(
         self,
         model_name: str = "deepseek/deepseek-chat-v3.1:free",
-        max_tokens: int = 4000,
-        temperature: float = 0.0,
-        enabled: bool = True,
-        use_openrouter: bool = False,
-        use_google_ai: bool = False
+        use_openrouter: bool = True,
+        use_google_ai: bool = False,
+        system_prompt: str = """\
+Your are part of a web agent who's job is to solve a task. Your are
+currently at a step of the whole episode, and your job is to extract the
+relevant information for solving the task. An agent will execute the task
+after you on the subset that you extracted. Make sure to extract sufficient
+information to be able to solve the task, but also remove information
+that is irrelevant to reduce the size of the observation and all the distractions.
+""",
+        user_prompt_template: str = """{instruction}
+
+# Goal:\n {goal}
+
+# Observation:\n{axtree}
+
+"""
     ):
         """
         Initialize the auxiliary model pruner.
@@ -83,194 +88,171 @@ class AuxModelPruner:
                        OpenAI: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo"
                        OpenRouter: "anthropic/claude-3.5-sonnet", "google/gemini-2.0-flash-exp", "deepseek/deepseek-chat-v3.1:free"
                        Google AI: "gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash"
-            max_tokens: Maximum tokens allowed in response
-            temperature: Sampling temperature (0.0 for deterministic)
-            enabled: Enable/disable pruning (for debugging)
             use_openrouter: If True, use OpenRouter API
             use_google_ai: If True, use Google AI Studio API (takes precedence over use_openrouter)
+            system_prompt: System prompt for the LLM
+            user_prompt_template: User prompt template
         """
         self.model_name = model_name
-        self.max_tokens = max_tokens
-        self.temperature = temperature
-        self.enabled = enabled
         self.use_openrouter = use_openrouter
         self.use_google_ai = use_google_ai
-        
-        # Token tracking
+        self.system_prompt = system_prompt
+        self.user_prompt_template = user_prompt_template
+
+        # Initialize counters
+        self.call_count = 0
         self.total_input_tokens = 0
         self.total_output_tokens = 0
-        self.call_count = 0
-        
-        # Initialize API client based on selection
-        if use_google_ai:
-            # Google AI Studio           
-            api_key = os.getenv("GEMINI_API_KEY")
-            if not api_key:
-                raise ValueError("GEMINI_API_KEY environment variable not set")
 
-            genai.configure(api_key=api_key)
-            self.client = genai.GenerativeModel(model_name)
-            logger.info(f"✅ Google AI Studio client initialized: {model_name}")
-            
-        elif use_openrouter:
-            # OpenRouter
-            api_key = os.getenv("OPENROUTER_API_KEY")
-            if not api_key:
-                raise ValueError("OPENROUTER_API_KEY environment variable not set")
-            
-            self.client = OpenAI(
-                base_url="https://openrouter.ai/api/v1",
-                api_key=api_key,
-            )
-            logger.info(f"✅ OpenRouter client initialized: {model_name}")
+        # ✅ NEU: Stats-Datei für Ray Multi-Processing
+        self.stats_file = Path(os.getenv('AGENTLAB_EXP_ROOT', '.')) / 'aux_pruning_stats_temp.json'
+
+        # Initialize API clients
+        if self.use_google_ai:
+            try:
+                import google.generativeai as genai
+                api_key = os.getenv("GEMINI_API_KEY")
+                if not api_key:
+                    raise ValueError("GOOGLE_AI_API_KEY environment variable not set")
+                genai.configure(api_key=api_key)
+                self.genai_client = genai.GenerativeModel(model_name)
+                logger.info(f"[OK] Google AI Studio client initialized: {model_name}")  # ✅ Kein Emoji
+            except Exception as e:
+                logger.error(f"[ERROR] Failed to initialize Google AI client: {e}")
+                raise
+        elif self.use_openrouter:
+            try:
+                from openai import OpenAI
+                api_key = os.getenv("OPENROUTER_API_KEY")
+                if not api_key:
+                    raise ValueError("OPENROUTER_API_KEY environment variable not set")
+                self.openai_client = OpenAI(
+                    base_url="https://openrouter.ai/api/v1",
+                    api_key=api_key,
+                )
+                logger.info(f"[OK] OpenRouter client initialized: {model_name}")  # ✅ Kein Emoji
+            except Exception as e:
+                logger.error(f"[ERROR] Failed to initialize OpenRouter client: {e}")
+                raise
         else:
-            # OpenAI
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                raise ValueError("OPENAI_API_KEY environment variable not set")
-            
-            self.client = OpenAI(api_key=api_key)
-            logger.info(f"✅ OpenAI client initialized: {model_name}")
-    
-    def call_llm(
-        self,
-        system_prompt: str,
-        user_prompt: str
-    ) -> Tuple[str, Dict[str, int]]:
+            try:
+                from openai import OpenAI
+                self.openai_client = OpenAI()
+                logger.info(f"[OK] OpenAI client initialized: {model_name}")  # ✅ Kein Emoji
+            except Exception as e:
+                logger.error(f"[ERROR] Failed to initialize OpenAI client: {e}")
+                raise
+
+    def call_llm(self, system_prompt: str, user_prompt: str) -> Tuple[str, Dict[str, int]]:
         """
-        Call the LLM API (OpenAI, OpenRouter, or Google AI) with system and user prompts.
-        
-        This method is optimized for repeated calls:
-        - Reuses the same client instance (connection pooling)
-        - Tracks token usage across all calls
-        - Minimal overhead
-        
-        Args:
-            system_prompt: System prompt for the LLM
-            user_prompt: User prompt for the LLM
-            
-        Returns:
-            Tuple of (llm_response_text, token_usage_dict)
-            token_usage_dict contains: {
-                "input_tokens": int,
-                "output_tokens": int,
-                "total_tokens": int
-            }
-            
-        Raises:
-            Exception: If API call fails
+        Call the configured LLM API and return the response with token usage.
         """
         try:
-            token_usage = {
-                "input_tokens": 0,
-                "output_tokens": 0,
-                "total_tokens": 0
-            }
-            
             if self.use_google_ai:
-                # Google AI Studio API call
-                # Combine system and user prompts (Google doesn't have separate system prompt)
+                # Google AI API call
                 full_prompt = f"{system_prompt}\n\n{user_prompt}"
-                
-                generation_config = genai.types.GenerationConfig(
-                    temperature=self.temperature,
-                    max_output_tokens=self.max_tokens,
-                )
-                
-                response = self.client.generate_content(
-                    full_prompt,
-                    generation_config=generation_config
-                )
-                
+                response = self.genai_client.generate_content(full_prompt)
                 llm_response = response.text
-                
-                # Extract token usage from Google AI response
-                if hasattr(response, 'usage_metadata'):
-                    token_usage["input_tokens"] = response.usage_metadata.prompt_token_count
-                    token_usage["output_tokens"] = response.usage_metadata.candidates_token_count
-                    token_usage["total_tokens"] = response.usage_metadata.total_token_count
-                
+
+                # Extract token usage from Google AI
+                token_usage = {
+                    "input_tokens": response.usage_metadata.prompt_token_count,
+                    "output_tokens": response.usage_metadata.candidates_token_count,
+                    "total_tokens": response.usage_metadata.total_token_count,
+                }
+
             else:
-                # OpenAI or OpenRouter API call
-                extra_params = {}
-                if self.use_openrouter:
-                    extra_params["extra_headers"] = {
-                        "HTTP-Referer": "https://github.com/webmall-efficient",
-                        "X-Title": "WebMall AXTree Pruning"
-                    }
-                
-                response = self.client.chat.completions.create(
+                # OpenAI/OpenRouter API call
+                response = self.openai_client.chat.completions.create(
                     model=self.model_name,
                     messages=[
                         {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
+                        {"role": "user", "content": user_prompt},
                     ],
-                    temperature=self.temperature,
-                    max_tokens=self.max_tokens,
-                    **extra_params
+                    temperature=0.0,
                 )
-                
+
                 llm_response = response.choices[0].message.content
-                
-                # Extract token usage from OpenAI/OpenRouter response
-                if hasattr(response, 'usage') and response.usage:
-                    token_usage["input_tokens"] = response.usage.prompt_tokens
-                    token_usage["output_tokens"] = response.usage.completion_tokens
-                    token_usage["total_tokens"] = response.usage.total_tokens
-            
+
+                # Extract token usage
+                token_usage = {
+                    "input_tokens": response.usage.prompt_tokens,
+                    "output_tokens": response.usage.completion_tokens,
+                    "total_tokens": response.usage.total_tokens,
+                }
+
             # Update cumulative counters
             self.total_input_tokens += token_usage["input_tokens"]
             self.total_output_tokens += token_usage["output_tokens"]
             self.call_count += 1
-            
+
             api_type = "Google AI" if self.use_google_ai else ("OpenRouter" if self.use_openrouter else "OpenAI")
-            info = (
-                f"📊 LLM Call #{self.call_count} ({api_type}) - Model: {self.model_name} | "
+            
+            # ✅ GEÄNDERT: Keine Emojis mehr!
+            logger.info(
+                f"[LLM] Call #{self.call_count} ({api_type}) - Model: {self.model_name} | "
                 f"Input: {token_usage['input_tokens']} | "
                 f"Output: {token_usage['output_tokens']} | "
                 f"Total: {token_usage['total_tokens']} tokens"
             )
-            print(info)
-            
+
+            # ✅ NEU: Schreibe Stats nach jedem Call
+            self._save_stats_to_file()
+
             return llm_response, token_usage
-            
+
         except Exception as e:
-            logger.error(f"❌ Error calling LLM API: {e}")
+            logger.error(f"[ERROR] Error calling LLM API: {e}")  # ✅ Kein Emoji
             raise
-    
-    def get_token_stats(self) -> Dict[str, Any]:
-        """
-        Get cumulative token usage statistics.
-        
-        Returns:
-            Dictionary with token usage stats:
-            {
-                "call_count": int,
-                "total_input_tokens": int,
-                "total_output_tokens": int,
-                "total_tokens": int,
-                "avg_input_tokens": float,
-                "avg_output_tokens": float
-            }
-        """
-        total = self.total_input_tokens + self.total_output_tokens
-        avg_input = self.total_input_tokens / self.call_count if self.call_count > 0 else 0
-        avg_output = self.total_output_tokens / self.call_count if self.call_count > 0 else 0
-        
+
+    def _save_stats_to_file(self):
+        """Save current stats to JSON file (Windows-compatible, no fcntl)."""
+        stats = self.get_token_stats()
+        stats['pid'] = os.getpid()  # Process ID für Ray Workers
+
+        try:
+            # ✅ Windows-kompatibel: Verwende einfaches File I/O
+            # Ray isoliert die Worker, also ist Race Condition unwahrscheinlich
+            
+            # Lese existierende Stats
+            all_stats = {}
+            if self.stats_file.exists():
+                try:
+                    with open(self.stats_file, 'r') as f:
+                        all_stats = json.load(f)
+                except (json.JSONDecodeError, IOError):
+                    pass
+
+            # Update Stats für diesen Worker
+            worker_key = f"worker_{os.getpid()}"
+            all_stats[worker_key] = stats
+
+            # Schreibe zurück (atomar mit temp file)
+            temp_file = self.stats_file.with_suffix('.tmp')
+            with open(temp_file, 'w') as f:
+                json.dump(all_stats, f, indent=2)
+            
+            # Atomic rename (Windows-kompatibel)
+            temp_file.replace(self.stats_file)
+
+        except Exception as e:
+            # ✅ Kein Emoji
+            logger.warning(f"[WARNING] Could not save pruning stats to file: {e}")
+
+    def get_token_stats(self) -> Dict[str, float]:
+        """Return cumulative token usage statistics."""
         return {
             "call_count": self.call_count,
             "total_input_tokens": self.total_input_tokens,
             "total_output_tokens": self.total_output_tokens,
-            "total_tokens": total,
-            "avg_input_tokens": round(avg_input, 2),
-            "avg_output_tokens": round(avg_output, 2)
+            "total_tokens": self.total_input_tokens + self.total_output_tokens,
+            "avg_input_tokens": (
+                self.total_input_tokens / self.call_count if self.call_count > 0 else 0
+            ),
+            "avg_output_tokens": (
+                self.total_output_tokens / self.call_count if self.call_count > 0 else 0
+            ),
         }
-    
-    def reset_token_stats(self):
-        """Reset token usage counters."""
-        self.total_input_tokens = 0
-        self.total_output_tokens = 0
-        self.call_count = 0
 
 def number_axtree_lines(axtree: str) -> Tuple[str, List[str]]:
     """
@@ -460,11 +442,11 @@ default_prompt_template = """{instruction}
 # Goal:\n {goal}
 
 # Observation:\n{axtree}
-
 """
-
 ## History : This is how the agent interacted with the task:\n{history}
 #Laut FocusAgent Paper reduced das Information
+
+
 
 def aux_model_pruning(
     axtree: str,

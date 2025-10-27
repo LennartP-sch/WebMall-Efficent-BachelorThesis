@@ -422,7 +422,8 @@ WEBMALL_BENCHMARKS = {
         backends=["webmall"],
         env_args_list=make_env_args_list_from_repeat_tasks(
             task_list=[
-                "webmall.Webmall_Checkout_Task8"
+                "webmall.Webmall_Find_Specific_Product_Task1", 
+                "webmall.Webmall_Find_Specific_Product_Task2",
             ],
             max_steps=50,
             n_repeats=1,

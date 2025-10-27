@@ -235,28 +235,64 @@ if __name__ == "__main__":  # necessary for dask backend
     if reproducibility_mode:
         study.append_to_journal(strict_reproducibility=True)
 
+    print("\n" + "=" * 80)
+    print("📊 Aggregating Auxiliary Model Pruning Statistics...")
+    print("=" * 80)
 
-    # Print Token Statistics (falls Auxiliary Model Pruning verwendet wurde)
-    print_final_pruning_stats()
+    # ✅ Lese Stats aus temporärer Datei
+    import json
+    import os
     
-    # ✅ Optional: Speichere Statistics in JSON Datei
-    from agentlab.agents.dynamic_prompting import get_pruning_stats
-    stats = get_pruning_stats()
+    stats_file = os.path.join(os.getenv('AGENTLAB_EXP_ROOT', '.'), 'aux_pruning_stats_temp.json')
     
-    # ✅ Debug
-    print(f"\n🔍 Debug after study.run():")
-    print(f"   study_dir = {study_dir}")
-    print(f"   stats = {stats}")
-
-    # ✅ Optional: Speichere Statistics in JSON Datei
-    from agentlab.agents.dynamic_prompting import get_pruning_stats
-    stats = get_pruning_stats()
-    if stats:
-        import json
-        stats_file = f"{study_dir}/aux_pruning_stats.json"
-        with open(stats_file, "w") as f:
-            json.dump(stats, f, indent=2)
-        print(f"✅ Token statistics saved to: {stats_file}\n")    
+    if os.path.exists(stats_file):
+        with open(stats_file, 'r') as f:
+            all_worker_stats = json.load(f)
+        
+        # ✅ Aggregiere Stats von allen Ray Workers
+        max_calls = 0
+        max_input = 0
+        max_output = 0
+        
+        for worker_id, stats in all_worker_stats.items():
+            max_calls = max(max_calls, stats['call_count'])
+            max_input = max(max_input, stats['total_input_tokens'])
+            max_output = max(max_output, stats['total_output_tokens'])
+        
+        if max_calls > 0:
+            total_tokens = max_input + max_output
+            avg_input = max_input / max_calls
+            avg_output = max_output / max_calls
+            
+            print(f"\n   Total API Calls: {max_calls}")
+            print(f"   Input Tokens: {max_input:,}")
+            print(f"   Output Tokens: {max_output:,}")
+            print(f"   Total Tokens: {total_tokens:,}")
+            print(f"   Avg Input per Call: {avg_input:.2f}")
+            print(f"   Avg Output per Call: {avg_output:.2f}")
+            print("=" * 80 + "\n")
+            
+            # ✅ Speichere finale Stats
+            final_stats = {
+                "call_count": max_calls,
+                "total_input_tokens": max_input,
+                "total_output_tokens": max_output,
+                "total_tokens": total_tokens,
+                "avg_input_tokens": round(avg_input, 2),
+                "avg_output_tokens": round(avg_output, 2)
+            }
+            
+            final_stats_file = os.path.join(study_dir, "aux_pruning_stats.json")
+            with open(final_stats_file, "w") as f:
+                json.dump(final_stats, f, indent=2)
+            print(f"✅ Token statistics saved to: {final_stats_file}\n")
+            
+            # ✅ Cleanup: Lösche temp Datei
+            os.remove(stats_file)
+        else:
+            print("⚠️ No pruning statistics found\n")
+    else:
+        print("⚠️ No pruning statistics file found (auxiliary model pruning was not used)\n")
 
     summarize_all_tasks_in_subdirs(study_dir)
     process_study_directory(study_dir)
