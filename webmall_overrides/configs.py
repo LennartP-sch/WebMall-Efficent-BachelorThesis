@@ -352,7 +352,7 @@ WEBMALL_BENCHMARKS = {
         task_metadata=task_metadata("webmall"),
     ),
     "webmall_short_basic": lambda: WebMallBenchmark(
-        name="webmall_test_short1",
+        name="webmall_short_basic",
         high_level_action_set_args=DEFAULT_HIGHLEVEL_ACTION_SET_ARGS["webarena"],
         is_multi_tab=True,
         supports_parallel_seeds=True,
@@ -381,7 +381,7 @@ WEBMALL_BENCHMARKS = {
         task_metadata=task_metadata("webmall"),
     ),
     "webmall_short_advanced": lambda: WebMallBenchmark(
-        name="webmall_test_short1",
+        name="webmall_short_advanced",
         high_level_action_set_args=DEFAULT_HIGHLEVEL_ACTION_SET_ARGS["webarena"],
         is_multi_tab=True,
         supports_parallel_seeds=True,
@@ -407,6 +407,22 @@ WEBMALL_BENCHMARKS = {
                 "webmall.Webmall_Find_Substitutes_Task4", 
                 "webmall.Webmall_Find_Substitutes_Task5", 
                 "webmall.Webmall_Find_Substitutes_Task6", 
+            ],
+            max_steps=50,
+            n_repeats=1,
+            seeds_rng=np.random.RandomState(42),
+        ),
+        task_metadata=task_metadata("webmall"),
+    ),
+    "test": lambda: WebMallBenchmark(
+        name="test",
+        high_level_action_set_args=DEFAULT_HIGHLEVEL_ACTION_SET_ARGS["webarena"],
+        is_multi_tab=True,
+        supports_parallel_seeds=True,
+        backends=["webmall"],
+        env_args_list=make_env_args_list_from_repeat_tasks(
+            task_list=[
+                "webmall.Webmall_Checkout_Task8"
             ],
             max_steps=50,
             n_repeats=1,

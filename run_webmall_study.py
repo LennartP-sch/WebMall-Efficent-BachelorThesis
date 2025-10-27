@@ -26,6 +26,7 @@ from agentlab.agents import dynamic_prompting as dp
 from agentlab.llm.llm_configs import CHAT_MODEL_ARGS_DICT
 
 from agentlab.agents.generic_agent.generic_agent import  GenericPromptFlags, GenericAgentArgs
+from agentlab.agents.dynamic_prompting import print_final_pruning_stats
 
 FLAGS_default = GenericPromptFlags(
     obs=dp.ObsFlags(
@@ -93,6 +94,10 @@ FLAGS_HTML_ADV.obs.use_prune_advanced = True
 
 FLAGS_AX_ADV2_M = FLAGS_AX_M.copy()
 FLAGS_AX_ADV2_M.obs.use_ax_tree_amazon = True
+
+FLAGS_AX_LLM_M = FLAGS_AX_M.copy()
+FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
+FLAGS_AX_LLM_M.obs.use_ax_tree = False
 
 AGENT_41_AX = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
@@ -166,20 +171,27 @@ AGENT_GEMINI_2_5_FLASH_AX_ADV2_M = GenericAgentArgs(
     flags=FLAGS_AX_ADV2_M,
 )
 
+AGENT_GEMINI_2_5_FLASH_LLM_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_LLM_M,
+)
+
 current_file = Path(__file__).resolve()
 PATH_TO_DOT_ENV_FILE = current_file.parent / ".env"
 load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GROK_4_FAST_AX_ADV2_M]
+agent_args = [AGENT_GEMINI_2_5_FLASH_LLM_AX_M]
 
 # ## select the benchmark to run on
 
-#benchmark = "webmall_v0.7"
+#benchmark = "webmall_v1.0"
 #benchmark = "webmall_basic_v1.0"
-benchmark = "webmall_advanced_v1.0"
+#benchmark = "webmall_advanced_v1.0"
 #benchmark = "webmall_test_short1"
+#benchmark = "webmall_short_basic"
+benchmark = "test"
 
 # Set reproducibility_mode = True for reproducibility
 # this will "ask" agents to be deterministic. Also, it will prevent you from launching if you have
@@ -191,7 +203,7 @@ reproducibility_mode = False
 relaunch = False
 
 ## Number of parallel jobs
-n_jobs = 6  # Make sure to use 1 job when debugging in VSCode
+n_jobs = 8  # Make sure to use 1 job when debugging in VSCode
 # n_jobs = -1  # to use all available cores
 
 
@@ -222,6 +234,29 @@ if __name__ == "__main__":  # necessary for dask backend
 
     if reproducibility_mode:
         study.append_to_journal(strict_reproducibility=True)
+
+
+    # Print Token Statistics (falls Auxiliary Model Pruning verwendet wurde)
+    print_final_pruning_stats()
+    
+    # ✅ Optional: Speichere Statistics in JSON Datei
+    from agentlab.agents.dynamic_prompting import get_pruning_stats
+    stats = get_pruning_stats()
+    
+    # ✅ Debug
+    print(f"\n🔍 Debug after study.run():")
+    print(f"   study_dir = {study_dir}")
+    print(f"   stats = {stats}")
+
+    # ✅ Optional: Speichere Statistics in JSON Datei
+    from agentlab.agents.dynamic_prompting import get_pruning_stats
+    stats = get_pruning_stats()
+    if stats:
+        import json
+        stats_file = f"{study_dir}/aux_pruning_stats.json"
+        with open(stats_file, "w") as f:
+            json.dump(stats, f, indent=2)
+        print(f"✅ Token statistics saved to: {stats_file}\n")    
 
     summarize_all_tasks_in_subdirs(study_dir)
     process_study_directory(study_dir)

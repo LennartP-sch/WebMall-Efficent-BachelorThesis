@@ -18,7 +18,6 @@ Supported APIs:
 
 SOTA -2k Tokens ist halt mega wenig
 TODO
-1. checken wie das obs["goal"] aussieht sollte jetzt geprintet werden
 2. über prunner and die kummulierte token usage rankommen
 3. und dann mal gucken was mit dem prompt noch so geht - aber eigentlich eh eine dumme idee
 
@@ -272,7 +271,6 @@ class AuxModelPruner:
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.call_count = 0
-        logger.info("🔄 Token statistics reset")
 
 def number_axtree_lines(axtree: str) -> Tuple[str, List[str]]:
     """
@@ -404,7 +402,6 @@ def get_pruner(
             use_google_ai=use_google_ai,
             **kwargs
         )
-        logger.info("🔧 Created new global pruner instance")
     
     return _global_pruner
 
@@ -462,11 +459,12 @@ default_prompt_template = """{instruction}
 
 # Goal:\n {goal}
 
-# History : This is how the agent interacted with the task:\n{history}
-
 # Observation:\n{axtree}
 
 """
+
+## History : This is how the agent interacted with the task:\n{history}
+#Laut FocusAgent Paper reduced das Information
 
 def aux_model_pruning(
     axtree: str,
@@ -522,12 +520,15 @@ def aux_model_pruning(
         
     # Step 1: Number the AXTree lines
     numbered_axtree, original_lines = number_axtree_lines(axtree)
-        
+
+    task_match = re.search(r'<task>(.*?)</task>', goal, re.DOTALL | re.IGNORECASE)    
+    goal = task_match.group(1).strip() if task_match else goal
+
     # Step 2: Format user prompt with template
     user_prompt = user_prompt_template.format(
         instruction=instruction,
         goal=goal,
-        history=actions if actions else "No actions yet",
+        #history=actions if actions else "No actions yet",
         axtree=numbered_axtree
     )
         
@@ -538,7 +539,7 @@ def aux_model_pruning(
     pruned_lines = extract_pruned_lines(llm_response, original_lines)
     
     if pruned_lines is None:
-        logger.warning("⚠️ Pruning failed, returning original AXTree")
+        print("LLM pruning failed. Returned AXTRee without changes")
         return axtree
         
     # Step 5: Return pruned AXTree

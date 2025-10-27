@@ -23,6 +23,7 @@ from agentlab.llm.llm_configs import CHAT_MODEL_ARGS_DICT
 
 from agentlab.agents.generic_agent.generic_agent import GenericAgent, GenericPromptFlags, GenericAgentArgs
 
+from agentlab.agents.dynamic_prompting import print_final_pruning_stats
 
 FLAGS_default = GenericPromptFlags(
     obs=dp.ObsFlags(
@@ -232,3 +233,4 @@ load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 if __name__ == "__main__":
     run_experiments(n_jobs=1, exp_args_list=exp_args, study_dir="task_results", parallel_backend="sequential")
+    print_final_pruning_stats()
