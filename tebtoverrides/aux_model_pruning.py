@@ -111,9 +111,9 @@ that is irrelevant to reduce the size of the observation and all the distraction
         if self.use_google_ai:
             try:
                 import google.generativeai as genai
-                api_key = os.getenv("GEMINI_API_KEY")
+                api_key = os.getenv("GEMINI_2nd_KEY")
                 if not api_key:
-                    raise ValueError("GOOGLE_AI_API_KEY environment variable not set")
+                    raise ValueError("GEMINI_2nd_KEY environment variable not set")
                 genai.configure(api_key=api_key)
                 self.genai_client = genai.GenerativeModel(model_name)
                 logger.info(f"[OK] Google AI Studio client initialized: {model_name}")  # ✅ Kein Emoji
@@ -439,28 +439,33 @@ A list of line numbers ranges that are relevant to achieve the goal. For example
 
 default_prompt_template = """{instruction}
 
+{aexample}
+
+{cexample}
+
 # Goal:\n {goal}
 
-# Observation:\n{axtree}
+# Agent's last reasoning \n{message}
+
+# Observation \n{axtree}
 """
 ## History : This is how the agent interacted with the task:\n{history}
 #Laut FocusAgent Paper reduced das Information
-
+# The url of this page : \n{url}
 
 
 def aux_model_pruning(
     axtree: str,
     goal: str,
-    history_obs: Optional[List[dict]] = None,
-    actions: Optional[List[str]] = None,
-    memories: Optional[List[str]] = None,
-    thoughts: Optional[List[str]] = None,
-    system_prompt: str = default_system_prompt,
-    user_prompt_template: str = default_prompt_template,
+    url: str,
+    chatmessages,  # ← Chat Historie (nicht nützlich)
+    actions=None,  # ✅ NEU: Bisherige Actions
+    thoughts=None,  # ✅ NEU: Bisherige Thoughts/Reasonings
     model_name: str = "deepseek/deepseek-chat-v3.1:free",
     use_openrouter: bool = True,
     use_google_ai: bool = False,
-    pruner: Optional[AuxModelPruner] = None  # ✅ NEU: Optional pruner parameter
+    pruner: Optional[AuxModelPruner] = None,
+    full_obs: dict = None
 ) -> str:
     """
     Main function to prune AXTree using auxiliary LLM via REST API.
@@ -506,22 +511,63 @@ def aux_model_pruning(
     task_match = re.search(r'<task>(.*?)</task>', goal, re.DOTALL | re.IGNORECASE)    
     goal = task_match.group(1).strip() if task_match else goal
 
-    # Step 2: Format user prompt with template
-    user_prompt = user_prompt_template.format(
+    # ✅ DEBUG: Print Actions und Thoughts
+    #print("\n" + "=" * 100)
+    #print("🔍 ACTIONS & THOUGHTS DEBUG")
+    #print("=" * 100)
+    
+    #print(f"\n📊 Actions type: {type(actions)}")
+    #print(f"📊 Actions length: {len(actions) if actions else 0}")
+    
+    #if actions:
+    #    print("\n📋 ACTIONS:")
+    #    for idx, action in enumerate(actions[-5:]):  # Letzte 5 Actions
+    #        print(f"  [{idx}] {action}")
+    
+    #print(f"\n📊 Thoughts type: {type(thoughts)}")
+    #print(f"📊 Thoughts length: {len(thoughts) if thoughts else 0}")
+    
+    #if thoughts:
+    #    print("\n💭 THOUGHTS (last 3):")
+    #    for idx, thought in enumerate(thoughts[-3:]):  # Letzte 3 Thoughts
+    #        print(f"\n  Thought #{idx + 1}:")
+    #       print(f"  {thought[:500]}...")  # Erste 500 chars
+    
+    #print("=" * 100 + "\n")
+
+    # ✅ Verwende letztes Thought oder letzte Action
+    #last_context = ""
+    
+    if thoughts and len(thoughts) > 0:
+        # Verwende letztes Reasoning
+        last_context = thoughts[-1]
+    else:
+        last_context = "No previous reasoning"
+
+    if actions and len(actions) > 0:
+        last_action = actions[-1]
+    else:
+        last_action = "No actions taken"    
+
+    # Step 2: Format user prompt
+    user_prompt = default_prompt_template.format(
         instruction=instruction,
+        aexample=abstract_ex,
+        cexample=concrete_ex,
         goal=goal,
-        #history=actions if actions else "No actions yet",
+        #url=url,
+        message=last_context,  # ✅ Verwende Thought oder Action
         axtree=numbered_axtree
     )
         
     # Step 3: Call LLM API
-    llm_response, token_usage = pruner.call_llm(system_prompt, user_prompt)
+    llm_response, token_usage = pruner.call_llm(default_system_prompt, user_prompt)
         
-    # Step 4: Extract pruned lines from LLM response
+    # Step 4: Extract pruned lines
     pruned_lines = extract_pruned_lines(llm_response, original_lines)
     
     if pruned_lines is None:
-        print("LLM pruning failed. Returned AXTRee without changes")
+        print("LLM pruning failed. Returned AXTree ohne Änderungen")
         return axtree
         
     # Step 5: Return pruned AXTree

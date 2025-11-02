@@ -187,6 +187,11 @@ AGENT_GEMINI_2_5_AX_LLM_M = GenericAgentArgs(
     flags=FLAGS_AX_LLM_M
 )
 
+AGENT_GEMINI_2_5_PRO_AX_LLM_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_LLM_M
+)
+
 AGENT_GEMINI_2_5_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_M
@@ -197,8 +202,8 @@ AGENT_GEMINI_2_5_AX_M = GenericAgentArgs(
 
 # example for a single task
 env_args = EnvArgsWebMall(
-    task_name="webmall.Webmall_Find_Specific_Product_Task5",
-    task_seed=0,
+    task_name="webmall.Webmall_Find_Specific_Product_Task7",
+    task_seed=22,
     max_steps=30,
     headless=True,
     record_video=False
@@ -215,7 +220,7 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
 #agent = AGENT_GEMINI_2_5_AX_LLM_M
 
-agent = AGENT_GEMINI_2_5_AX_M
+agent = AGENT_GEMINI_2_5_PRO_AX_LLM_M
 
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 

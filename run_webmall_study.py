@@ -82,9 +82,6 @@ FLAGS_AX_V.obs.use_som = True
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
 
-FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
-FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
-
 FLAGS_HTML = FLAGS_default.copy()
 FLAGS_HTML.obs.use_html = True
 FLAGS_HTML.obs.use_ax_tree = False
@@ -92,12 +89,17 @@ FLAGS_HTML.obs.use_ax_tree = False
 FLAGS_HTML_ADV = FLAGS_HTML.copy()
 FLAGS_HTML_ADV.obs.use_prune_advanced = True
 
-FLAGS_AX_ADV2_M = FLAGS_AX_M.copy()
-FLAGS_AX_ADV2_M.obs.use_ax_tree_amazon = True
+FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
+FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = False
+FLAGS_AX_ADV_M.obs.use_ax_tree_amazon = True
 
 FLAGS_AX_LLM_M = FLAGS_AX_M.copy()
 FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
-FLAGS_AX_LLM_M.obs.use_ax_tree = False
+# ✅ FIXED: Keep use_ax_tree=True (inherited from FLAGS_AX_M) so the pruned AXTree is visible to the agent
+# Previously had: FLAGS_AX_LLM_M.obs.use_ax_tree = False ← This made the AXTree invisible in the prompt!
+
+FLAGS_AX_ADV_LLM_M = FLAGS_AX_M.copy()
+FLAGS_AX_ADV_LLM_M.obs.use_amazone_and_model_ax_tree = True
 
 AGENT_41_AX = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
@@ -138,16 +140,16 @@ AGENT_CLAUDE_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["anthropic/claude-sonnet-4-20250514"],
     flags=FLAGS_AX_M,
 )
+AGENT_GROK_4_FAST_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_M,
+)
 AGENT_GROK_4_FAST_AX_ADV_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
     flags=FLAGS_AX_ADV_M,
 )
-AGENT_GROK_4_FAST_AX_ADV2_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
-    flags=FLAGS_AX_ADV2_M,
-)
-AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+AGENT_GEMINI_2_5_FLASH_LITE_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite"],
     flags=FLAGS_AX_M,
 )
 AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
@@ -166,14 +168,34 @@ AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
     flags=FLAGS_AX_M
 )
-AGENT_GEMINI_2_5_FLASH_AX_ADV2_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
-    flags=FLAGS_AX_ADV2_M,
+AGENT_GEMINI_2_5_PRO_LLM_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_LLM_M
+)
+AGENT_GEMINI_2_5_FLASH_LITE_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite"],
+    flags=FLAGS_AX_ADV_M,
 )
 
 AGENT_GEMINI_2_5_FLASH_LLM_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_AX_LLM_M,
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite"],
+    flags=FLAGS_AX_LLM_M
+)
+AGENT_GEMINI_2_5_PRO_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_ADV_M
+)
+AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_ADV_LLM_M
+)
+AGENT_GROK_4_FAST_LLM_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_LLM_M
+)
+AGENT_GROK_4_FAST_AX_ADV_LLM_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_ADV_LLM_M
 )
 
 current_file = Path(__file__).resolve()
@@ -182,16 +204,21 @@ load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GEMINI_2_5_FLASH_LLM_AX_M]
+agent_args = [AGENT_GROK_4_FAST_AX_ADV_LLM_M]
 
 # ## select the benchmark to run on
 
-#benchmark = "webmall_v1.0"
+#benchmark = "webmall_v1.0"s
 #benchmark = "webmall_basic_v1.0"
 #benchmark = "webmall_advanced_v1.0"
-#benchmark = "webmall_test_short1"
+#benchmark = "test"
+
+#WebMall Efficient Subset Benchmark
 #benchmark = "webmall_short_basic"
-benchmark = "test"
+benchmark = "webmall_short_advanced"
+
+
+
 
 # Set reproducibility_mode = True for reproducibility
 # this will "ask" agents to be deterministic. Also, it will prevent you from launching if you have
@@ -203,7 +230,7 @@ reproducibility_mode = False
 relaunch = False
 
 ## Number of parallel jobs
-n_jobs = 8  # Make sure to use 1 job when debugging in VSCode
+n_jobs = 4 # Make sure to use 1 job when debugging in VSCode
 # n_jobs = -1  # to use all available cores
 
 
