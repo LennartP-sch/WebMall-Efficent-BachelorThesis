@@ -127,13 +127,18 @@ def summarize_single_task(directory="."):
     cumulative_reward = 0.0
     previous_step_num = None
     step_nums_in_order = []
-    last_step_data = None  # Store the last step data for extracting checklist
+    last_step_data = None
+
+    # ✅ NEU: Prüfe ob überhaupt Step-Files existieren
+    if not step_files:
+        print(f"⚠️ No step files found in {directory}")
+        return
 
     for filepath in step_files:
         try:
             with gzip.open(filepath, "rb") as f:
                 step_data = pickle.load(f)
-                last_step_data = step_data  # Keep track of the last step
+                last_step_data = step_data
 
             step_num = step_data.step
             step_nums_in_order.append(step_num)
@@ -170,6 +175,11 @@ def summarize_single_task(directory="."):
 
         except Exception as e:
             print(f"Failed to process {filepath}: {e}")
+
+    # ✅ NEU: Prüfe ob überhaupt Steps verarbeitet wurden
+    if not step_nums_in_order:
+        print(f"⚠️ No valid steps processed in {directory}")
+        return
 
     csv_data_all = []
 
@@ -226,17 +236,25 @@ def summarize_single_task(directory="."):
 
             if err_msg or stack_trace:
                 last_step = step_nums_in_order[-1]
+                
+                # ✅ FIX: Stelle sicher dass last_step existiert
+                if last_step not in all_task_summary:
+                    all_task_summary[last_step] = {}
+                    
                 if err_msg:
                     all_task_summary[last_step]["err_msg"] = err_msg
                 if stack_trace:
                     all_task_summary[last_step]["stack_trace"] = stack_trace
+                    
         except Exception as e:
             print(f"⚠️ Failed to read or parse summary_info.json: {e}")
 
     # Extract and save checklist data from the last step
     if (
-        last_step_data
+        last_step_data is not None
         and hasattr(last_step_data, "task_info")
+        and last_step_data.task_info is not None
+        and isinstance(last_step_data.task_info, dict)
         and "checklist" in last_step_data.task_info
     ):
         checklist = last_step_data.task_info["checklist"]
@@ -283,9 +301,16 @@ def summarize_single_task(directory="."):
             print(f"  - {checklist_csv_path}")
             print(f"  - {penalties_csv_path}")
 
-    # Sort steps
-    sorted_steps_data = OrderedDict(sorted(all_steps_data.items()))
-    sorted_task_summary = OrderedDict(sorted(all_task_summary.items()))
+    # Sort steps (only if data exists)
+    if all_steps_data:
+        sorted_steps_data = OrderedDict(sorted(all_steps_data.items()))
+    else:
+        sorted_steps_data = OrderedDict()
+        
+    if all_task_summary:
+        sorted_task_summary = OrderedDict(sorted(all_task_summary.items()))
+    else:
+        sorted_task_summary = OrderedDict()
 
     # Save eco metrics summary
     eco_output = OrderedDict()

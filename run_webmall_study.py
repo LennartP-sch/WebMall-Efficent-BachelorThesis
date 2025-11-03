@@ -204,7 +204,7 @@ load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GROK_4_FAST_AX_ADV_LLM_M]
+agent_args = [AGENT_GEMINI_2_5_PRO_LLM_AX_M]
 
 # ## select the benchmark to run on
 
@@ -276,24 +276,24 @@ if __name__ == "__main__":  # necessary for dask backend
         with open(stats_file, 'r') as f:
             all_worker_stats = json.load(f)
         
-        # ✅ Aggregiere Stats von allen Ray Workers
-        max_calls = 0
-        max_input = 0
-        max_output = 0
+        # ✅ Aggregiere Stats von allen Ray Workers (SUMMIERE über alle Workers!)
+        total_calls = 0
+        total_input = 0
+        total_output = 0
         
         for worker_id, stats in all_worker_stats.items():
-            max_calls = max(max_calls, stats['call_count'])
-            max_input = max(max_input, stats['total_input_tokens'])
-            max_output = max(max_output, stats['total_output_tokens'])
+            total_calls += stats['call_count']
+            total_input += stats['total_input_tokens']
+            total_output += stats['total_output_tokens']
         
-        if max_calls > 0:
-            total_tokens = max_input + max_output
-            avg_input = max_input / max_calls
-            avg_output = max_output / max_calls
+        if total_calls > 0:
+            total_tokens = total_input + total_output
+            avg_input = total_input / total_calls
+            avg_output = total_output / total_calls
             
-            print(f"\n   Total API Calls: {max_calls}")
-            print(f"   Input Tokens: {max_input:,}")
-            print(f"   Output Tokens: {max_output:,}")
+            print(f"\n   Total API Calls: {total_calls}")
+            print(f"   Input Tokens: {total_input:,}")
+            print(f"   Output Tokens: {total_output:,}")
             print(f"   Total Tokens: {total_tokens:,}")
             print(f"   Avg Input per Call: {avg_input:.2f}")
             print(f"   Avg Output per Call: {avg_output:.2f}")
@@ -301,9 +301,9 @@ if __name__ == "__main__":  # necessary for dask backend
             
             # ✅ Speichere finale Stats
             final_stats = {
-                "call_count": max_calls,
-                "total_input_tokens": max_input,
-                "total_output_tokens": max_output,
+                "call_count": total_calls,
+                "total_input_tokens": total_input,
+                "total_output_tokens": total_output,
                 "total_tokens": total_tokens,
                 "avg_input_tokens": round(avg_input, 2),
                 "avg_output_tokens": round(avg_output, 2)
