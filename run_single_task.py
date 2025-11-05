@@ -64,6 +64,7 @@ FLAGS_default = GenericPromptFlags(
     max_prompt_tokens=60_000,
     be_cautious=True,
     extra_instructions=None,
+    #use_chaching_adjusted_prompt=False,  # Set to True to test cache-optimized prompts
     )
 
 FLAGS_AX = FLAGS_default.copy()
@@ -81,6 +82,9 @@ FLAGS_AX_V.obs.use_som = True
 
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
+
+FLAGS_AX_M_CACHED = FLAGS_AX_M.copy()
+FLAGS_AX_M_CACHED.adjusted_prompt_for_caching = True
 
 FLAGS_AX_COPY_M = FLAGS_AX_M.copy()
 FLAGS_AX_COPY_M.obs.use_ax_tree_amazon = True
@@ -187,14 +191,23 @@ AGENT_GEMINI_2_5_AX_LLM_M = GenericAgentArgs(
     flags=FLAGS_AX_LLM_M
 )
 
+AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_M,
+)
+
 AGENT_GEMINI_2_5_PRO_AX_LLM_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
-    flags=FLAGS_AX_LLM_M
+    flags=FLAGS_AX_LLM_M,
 )
 
 AGENT_GEMINI_2_5_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_M
+)
+AGENT_GEMINI_2_5_AX_M_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_M_CACHED
 )
 
 #webmall.Webmall_Cheapest_Offer_Vague_Requirements_Task1_15
@@ -220,8 +233,7 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
 #agent = AGENT_GEMINI_2_5_AX_LLM_M
 
-agent = AGENT_GEMINI_2_5_PRO_AX_LLM_M
-
+agent = AGENT_GROK_4_FAST_AMZ_AX_M
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 
 exp_args = [

@@ -82,6 +82,9 @@ FLAGS_AX_V.obs.use_som = True
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
 
+FLAGS_AX_M_CACHED = FLAGS_AX_M.copy()
+FLAGS_AX_M_CACHED.adjusted_prompt_for_caching = True
+
 FLAGS_HTML = FLAGS_default.copy()
 FLAGS_HTML.obs.use_html = True
 FLAGS_HTML.obs.use_ax_tree = False
@@ -101,9 +104,9 @@ FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
 FLAGS_AX_ADV_LLM_M = FLAGS_AX_M.copy()
 FLAGS_AX_ADV_LLM_M.obs.use_amazone_and_model_ax_tree = True
 
-AGENT_41_AX = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
-    flags=FLAGS_AX,
+AGENT_41_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/openai/gpt-4.1"], #"openai/gpt-4.1-2025-04-14"
+    flags=FLAGS_AX_ADV_M,
 )
 
 AGENT_CLAUDE_AX = GenericAgentArgs(
@@ -168,6 +171,10 @@ AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
     flags=FLAGS_AX_M
 )
+AGENT_GEMINI_2_5_PRO_AX_M_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_M_CACHED
+)
 AGENT_GEMINI_2_5_PRO_LLM_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
     flags=FLAGS_AX_LLM_M
@@ -204,18 +211,18 @@ load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GEMINI_2_5_PRO_LLM_AX_M]
+agent_args = [AGENT_41_AX_ADV_M]
 
 # ## select the benchmark to run on
 
-#benchmark = "webmall_v1.0"s
+#benchmark = "webmall_v1.0"
 #benchmark = "webmall_basic_v1.0"
 #benchmark = "webmall_advanced_v1.0"
-#benchmark = "test"
+benchmark = "test"
 
 #WebMall Efficient Subset Benchmark
 #benchmark = "webmall_short_basic"
-benchmark = "webmall_short_advanced"
+#benchmark = "webmall_short_advanced"
 
 
 

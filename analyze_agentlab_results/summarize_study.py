@@ -202,6 +202,7 @@ def read_summary_info_data(subdir):
     summary_info_data = {
         "input_tokens": 0,
         "output_tokens": 0,
+        "cached_tokens": 0,
         "cost": 0.0,
         "step_elapsed": 0.0,
         "agent_elapsed": 0.0,
@@ -216,6 +217,9 @@ def read_summary_info_data(subdir):
                 )
                 summary_info_data["output_tokens"] = data.get(
                     "stats.cum_output_tokens", 0
+                )
+                summary_info_data["cached_tokens"] = data.get(
+                    "stats.cum_cached_tokens", 0
                 )
                 summary_info_data["cost"] = data.get("stats.cum_cost", 0.0)
                 summary_info_data["step_elapsed"] = data.get(
@@ -282,6 +286,7 @@ def summarize_all_tasks_in_subdirs(root_directory):
                 "num_steps": 0,
                 "input_tokens": summary_info_data["input_tokens"],
                 "output_tokens": summary_info_data["output_tokens"],
+                "cached_tokens": summary_info_data["cached_tokens"],
                 "cost": summary_info_data["cost"],
                 "step_elapsed": summary_info_data["step_elapsed"],
                 "agent_elapsed": summary_info_data["agent_elapsed"],
@@ -384,6 +389,7 @@ def summarize_all_tasks_in_subdirs(root_directory):
                 "total_steps": 0,
                 "total_input_tokens": 0,
                 "total_output_tokens": 0,
+                "total_cached_tokens": 0,
                 "total_cost": 0.0,
                 "total_step_elapsed": 0.0,
                 "total_agent_elapsed": 0.0,
@@ -401,6 +407,7 @@ def summarize_all_tasks_in_subdirs(root_directory):
         ts["total_steps"] += result["num_steps"]
         ts["total_input_tokens"] += result["input_tokens"]
         ts["total_output_tokens"] += result["output_tokens"]
+        ts["total_cached_tokens"] += result["cached_tokens"]
         ts["total_cost"] += result["cost"]
         ts["total_step_elapsed"] += result["step_elapsed"]
         ts["total_agent_elapsed"] += result["agent_elapsed"]
@@ -450,6 +457,7 @@ def summarize_all_tasks_in_subdirs(root_directory):
         avg_steps = ts["total_steps"] / count
         avg_input_tokens = ts["total_input_tokens"] / count
         avg_output_tokens = ts["total_output_tokens"] / count
+        avg_cached_tokens = ts["total_cached_tokens"] / count
         avg_cost = ts["total_cost"] / count
         avg_step_elapsed = ts["total_step_elapsed"] / count
         avg_agent_elapsed = ts["total_agent_elapsed"] / count
@@ -472,7 +480,8 @@ def summarize_all_tasks_in_subdirs(root_directory):
         print(f"   ⏱️ Avg Total Runtime: {avg_time_elapsed:.2f}s")
         print(f"   📥 Avg Input Tokens: {avg_input_tokens:.0f}")
         print(f"   📤 Avg Output Tokens: {avg_output_tokens:.0f}")
-        print(f"   💰 Avg Cost: ${avg_cost:.4f}\n")
+        print(f"   💾 Avg Cached Tokens: {avg_cached_tokens:.0f}")
+        print(f"    Avg Cost: ${avg_cost:.4f}\n")
 
         # Store clean summary
         export_type_summary[task_type] = {
@@ -492,6 +501,7 @@ def summarize_all_tasks_in_subdirs(root_directory):
             "avg_time_elapsed": avg_time_elapsed,
             "avg_input_tokens": avg_input_tokens,
             "avg_output_tokens": avg_output_tokens,
+            "avg_cached_tokens": avg_cached_tokens,
             "avg_cost": avg_cost,
         }
 
@@ -529,6 +539,7 @@ def summarize_all_tasks_in_subdirs(root_directory):
     total_steps = sum(ts["total_steps"] for ts in type_summary.values())
     total_input_tokens = sum(ts["total_input_tokens"] for ts in type_summary.values())
     total_output_tokens = sum(ts["total_output_tokens"] for ts in type_summary.values())
+    total_cached_tokens = sum(ts["total_cached_tokens"] for ts in type_summary.values())
     total_cost = sum(ts["total_cost"] for ts in type_summary.values())
     total_step_elapsed = sum(ts["total_step_elapsed"] for ts in type_summary.values())
     total_agent_elapsed = sum(ts["total_agent_elapsed"] for ts in type_summary.values())
@@ -565,6 +576,9 @@ def summarize_all_tasks_in_subdirs(root_directory):
         "avg_output_tokens": (
             total_output_tokens / total_tasks if total_tasks > 0 else 0.0
         ),
+        "avg_cached_tokens": (
+            total_cached_tokens / total_tasks if total_tasks > 0 else 0.0
+        ),
         "avg_cost": total_cost / total_tasks if total_tasks > 0 else 0.0,
     }
 
@@ -588,7 +602,8 @@ def summarize_all_tasks_in_subdirs(root_directory):
     print(f"⏱️ Avg Total Runtime: {overall_summary['avg_time_elapsed']:.2f}s")
     print(f"📥 Avg Input Tokens: {overall_summary['avg_input_tokens']:.0f}")
     print(f"📤 Avg Output Tokens: {overall_summary['avg_output_tokens']:.0f}")
-    print(f"💰 Avg Cost: ${overall_summary['avg_cost']:.4f}\n")
+    print(f"� Avg Cached Tokens: {overall_summary['avg_cached_tokens']:.0f}")
+    print(f"�💰 Avg Cost: ${overall_summary['avg_cost']:.4f}\n")
 
     # ------------------- PRINT INDIVIDUAL TASK DETAILS -------------------
     critical_tasks = sorted(
@@ -618,7 +633,8 @@ def summarize_all_tasks_in_subdirs(root_directory):
             )
             print(f"   📥 Input Tokens: {result['input_tokens']}")
             print(f"   📤 Output Tokens: {result['output_tokens']}")
-            print(f"   💰 Cost: ${result['cost']:.4f}")
+            print(f"   � Cached Tokens: {result['cached_tokens']}")
+            print(f"   �💰 Cost: ${result['cost']:.4f}")
             if result["terminated"]:
                 print(f"   🏁 Terminated: Yes")
             if result["truncated"]:
