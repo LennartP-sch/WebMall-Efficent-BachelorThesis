@@ -151,20 +151,20 @@ AGENT_GROK_4_FAST_AX_ADV_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
     flags=FLAGS_AX_ADV_M,
 )
-AGENT_GEMINI_2_5_FLASH_LITE_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite"],
+AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_M,
 )
 AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_ADV_M,
 )
 AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_HTML,
 )
 AGENT_GEMINI_2_5_FLASH_ADV_HTML = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_HTML_ADV,
 )
 AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
@@ -179,13 +179,13 @@ AGENT_GEMINI_2_5_PRO_LLM_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
     flags=FLAGS_AX_LLM_M
 )
-AGENT_GEMINI_2_5_FLASH_LITE_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite"],
+AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_ADV_M,
 )
 
 AGENT_GEMINI_2_5_FLASH_LLM_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite"],
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_LLM_M
 )
 AGENT_GEMINI_2_5_PRO_AX_ADV_M = GenericAgentArgs(
@@ -205,24 +205,30 @@ AGENT_GROK_4_FAST_AX_ADV_LLM_M = GenericAgentArgs(
     flags=FLAGS_AX_ADV_LLM_M
 )
 
+AGENT_GEMINI_2_5_CHACHED_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_M_CACHED
+)
+
 current_file = Path(__file__).resolve()
 PATH_TO_DOT_ENV_FILE = current_file.parent / ".env"
 load_dotenv(PATH_TO_DOT_ENV_FILE)
 
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_41_AX_ADV_M]
+agent_args = [AGENT_GEMINI_2_5_FLASH_AX_ADV_M]
 
 # ## select the benchmark to run on
 
 #benchmark = "webmall_v1.0"
 #benchmark = "webmall_basic_v1.0"
 #benchmark = "webmall_advanced_v1.0"
-benchmark = "test"
+#benchmark = "test"
 
 #WebMall Efficient Subset Benchmark
 #benchmark = "webmall_short_basic"
-#benchmark = "webmall_short_advanced"
+benchmark = "webmall_short_advanced"
+
 
 
 
@@ -287,33 +293,40 @@ if __name__ == "__main__":  # necessary for dask backend
         total_calls = 0
         total_input = 0
         total_output = 0
+        total_cached_tokens = 0
         
         for worker_id, stats in all_worker_stats.items():
             total_calls += stats['call_count']
             total_input += stats['total_input_tokens']
             total_output += stats['total_output_tokens']
+            total_cached_tokens += stats.get('total_cached_tokens', 0)  # ✅ Cached Tokens aggregieren
         
         if total_calls > 0:
             total_tokens = total_input + total_output
-            avg_input = total_input / total_calls
-            avg_output = total_output / total_calls
+            avg_input_percall = total_input / total_calls
+            avg_output_percall = total_output / total_calls
+            avg_cached_percall = total_cached_tokens / total_calls if total_cached_tokens > 0 else 0
             
             print(f"\n   Total API Calls: {total_calls}")
             print(f"   Input Tokens: {total_input:,}")
             print(f"   Output Tokens: {total_output:,}")
+            print(f"   Cached Tokens: {total_cached_tokens:,}")  # ✅ Cached Tokens ausgeben
             print(f"   Total Tokens: {total_tokens:,}")
-            print(f"   Avg Input per Call: {avg_input:.2f}")
-            print(f"   Avg Output per Call: {avg_output:.2f}")
+            print(f"   Avg Input per Call: {avg_input_percall:.2f}")
+            print(f"   Avg Output per Call: {avg_output_percall:.2f}")
+            print(f"   Avg Cached per Call: {avg_cached_percall:.2f}")  # ✅ Cached Tokens Durchschnitt
             print("=" * 80 + "\n")
             
-            # ✅ Speichere finale Stats
+            # ✅ Speichere finale Stats (inkl. Cached Tokens)
             final_stats = {
                 "call_count": total_calls,
                 "total_input_tokens": total_input,
                 "total_output_tokens": total_output,
+                "total_cached_tokens": total_cached_tokens,  # ✅ NEU
                 "total_tokens": total_tokens,
-                "avg_input_tokens": round(avg_input, 2),
-                "avg_output_tokens": round(avg_output, 2)
+                "avg_input_tokens": round(avg_input_percall, 2),
+                "avg_output_tokens": round(avg_output_percall, 2),
+                "avg_cached_tokens": round(avg_cached_percall, 2)  # ✅ NEU
             }
             
             final_stats_file = os.path.join(study_dir, "aux_pruning_stats.json")

@@ -103,6 +103,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
         self.call_count = 0
         self.total_input_tokens = 0
         self.total_output_tokens = 0
+        self.total_cached_tokens = 0
 
         # ✅ NEU: Stats-Datei für Ray Multi-Processing
         self.stats_file = Path(os.getenv('AGENTLAB_EXP_ROOT', '.')) / 'aux_pruning_stats_temp.json'
@@ -159,6 +160,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
                     "input_tokens": response.usage_metadata.prompt_token_count,
                     "output_tokens": response.usage_metadata.candidates_token_count,
                     "total_tokens": response.usage_metadata.total_token_count,
+                    "cached_tokens": response.usage_metadata.cached_token_count,
                 }
 
             else:
@@ -174,16 +176,24 @@ that is irrelevant to reduce the size of the observation and all the distraction
 
                 llm_response = response.choices[0].message.content
 
+                # Extract cached tokens from OpenAI/OpenRouter
+                cached_tokens = 0
+                if hasattr(response.usage, 'prompt_tokens_details'):
+                    if hasattr(response.usage.prompt_tokens_details, 'cached_tokens'):
+                        cached_tokens = response.usage.prompt_tokens_details.cached_tokens or 0
+
                 # Extract token usage
                 token_usage = {
                     "input_tokens": response.usage.prompt_tokens,
                     "output_tokens": response.usage.completion_tokens,
                     "total_tokens": response.usage.total_tokens,
+                    "cached_tokens": cached_tokens
                 }
 
             # Update cumulative counters
             self.total_input_tokens += token_usage["input_tokens"]
             self.total_output_tokens += token_usage["output_tokens"]
+            self.total_cached_tokens += token_usage["cached_tokens"]
             self.call_count += 1
 
             api_type = "Google AI" if self.use_google_ai else ("OpenRouter" if self.use_openrouter else "OpenAI")
@@ -194,6 +204,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
                 f"Input: {token_usage['input_tokens']} | "
                 f"Output: {token_usage['output_tokens']} | "
                 f"Total: {token_usage['total_tokens']} tokens"
+                f"Cached: {token_usage['cached_tokens']} tokens"
             )
 
             # ✅ NEU: Schreibe Stats nach jedem Call
@@ -242,10 +253,12 @@ that is irrelevant to reduce the size of the observation and all the distraction
     def get_token_stats(self) -> Dict[str, float]:
         """Return cumulative token usage statistics."""
         return {
+            "Model Name": self.model_name,
             "call_count": self.call_count,
             "total_input_tokens": self.total_input_tokens,
             "total_output_tokens": self.total_output_tokens,
             "total_tokens": self.total_input_tokens + self.total_output_tokens,
+            "total_cached_tokens": self.total_cached_tokens,
             "avg_input_tokens": (
                 self.total_input_tokens / self.call_count if self.call_count > 0 else 0
             ),

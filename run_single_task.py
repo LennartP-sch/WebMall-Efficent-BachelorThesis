@@ -103,7 +103,7 @@ FLAGS_HTML.obs.use_ax_tree = False
 
 AGENT_41_AX = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
-    flags=FLAGS_AX,
+    flags=FLAGS_AX_M_CACHED,
 )
 
 AGENT_CLAUDE_AX = GenericAgentArgs(
@@ -172,8 +172,8 @@ AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
 )
 
 AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
-    flags=FLAGS_AX_ADV_M,
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_M_CACHED,
 )
 
 AGENT_GEMINI_2_5_FLASH_AX_COPY_M = GenericAgentArgs(
@@ -209,6 +209,10 @@ AGENT_GEMINI_2_5_AX_M_CACHED = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_M_CACHED
 )
+AGENT_GEMINI_2_5_AX_M_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_M_CACHED
+)
 
 #webmall.Webmall_Cheapest_Offer_Vague_Requirements_Task1_15
 #Webmall_Cheapest_Offer_Specific_Requirements_Task3
@@ -217,7 +221,7 @@ AGENT_GEMINI_2_5_AX_M_CACHED = GenericAgentArgs(
 env_args = EnvArgsWebMall(
     task_name="webmall.Webmall_Find_Specific_Product_Task7",
     task_seed=22,
-    max_steps=30,
+    max_steps=35,
     headless=True,
     record_video=False
 )
@@ -233,7 +237,9 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
 #agent = AGENT_GEMINI_2_5_AX_LLM_M
 
-agent = AGENT_GROK_4_FAST_AMZ_AX_M
+agent = AGENT_41_AX
+
+
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 
 exp_args = [
