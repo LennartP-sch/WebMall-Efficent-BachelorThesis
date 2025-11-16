@@ -160,7 +160,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
                     "input_tokens": response.usage_metadata.prompt_token_count,
                     "output_tokens": response.usage_metadata.candidates_token_count,
                     "total_tokens": response.usage_metadata.total_token_count,
-                    "cached_tokens": response.usage_metadata.cached_token_count,
+                    "cached_tokens": response.usage_metadata.cached_content_token_count if hasattr(response.usage_metadata, 'cached_content_token_count') else 0,
                 }
 
             else:

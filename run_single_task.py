@@ -83,6 +83,9 @@ FLAGS_AX_V.obs.use_som = True
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
 
+FLAGSTEST = FLAGS_AX_M.copy()
+FLAGSTEST.obs.use_action_history = False
+
 FLAGS_AX_M_CACHED = FLAGS_AX_M.copy()
 FLAGS_AX_M_CACHED.adjusted_prompt_for_caching = True
 
@@ -95,14 +98,24 @@ FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
 #FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
 
+FLAGS_AX_M_ADJUSTED_MEMORY = FLAGS_AX_M.copy()
+FLAGS_AX_M_ADJUSTED_MEMORY.use_structured_memory = True
+
+FLAGS_AX_AM_CACHED = FLAGS_AX_M_ADJUSTED_MEMORY.copy()
+FLAGS_AX_AM_CACHED.adjusted_prompt_for_caching_am = True
+
 FLAGS_HTML = FLAGS_default.copy()
 FLAGS_HTML.obs.use_html = True 
 FLAGS_HTML.obs.use_prune_advanced = True
 FLAGS_HTML.obs.use_ax_tree = False
 #FLAGS_HTML.extra_instructions = ("YOU HAVE ONLY 30 STEPS TO COMPLETE THE TASK, PLAN ACCORDINGLY. IF YOU EXCEED 30 STEPS, THE TASK WILL END AUTOMATICALLY WITH NO SUBMITTED ANSWER. SO SUBMIT YOUR BEST POSSIBLE ANSWER IN STEP 30. Always answer only with one <action> xxx </action> tag, never multiple action tags. ")
 
-AGENT_41_AX = GenericAgentArgs(
+AGENT_41_AX_M_CACHED = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_M_CACHED,
+)
+AGENT_41_AX_M_CACHED_OR = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/openai/gpt-4.1-2025-04-14"],
     flags=FLAGS_AX_M_CACHED,
 )
 
@@ -181,9 +194,9 @@ AGENT_GEMINI_2_5_FLASH_AX_COPY_M = GenericAgentArgs(
     flags=FLAGS_AX_COPY_M,
 )
 
-AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite-preview-09-2025"],
-    flags=FLAGS_HTML
+AGENT_GEMINI_2_5_NOH = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash-lite"],
+    flags=FLAGSTEST
 )
 
 AGENT_GEMINI_2_5_AX_LLM_M = GenericAgentArgs(
@@ -213,15 +226,25 @@ AGENT_GEMINI_2_5_AX_M_CACHED = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_M_CACHED
 )
+AGENT_GEMINI_2_5_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_M_ADJUSTED_MEMORY
+)
+
+AGENT_GEMINI_2_5_AX_AM_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_AM_CACHED
+)
+
 
 #webmall.Webmall_Cheapest_Offer_Vague_Requirements_Task1_15
 #Webmall_Cheapest_Offer_Specific_Requirements_Task3
 
 # example for a single task
 env_args = EnvArgsWebMall(
-    task_name="webmall.Webmall_Find_Specific_Product_Task7",
+    task_name="webmall.Webmall_Products_Fulfilling_Specific_Requirements_Task9",
     task_seed=22,
-    max_steps=35,
+    max_steps=50,
     headless=True,
     record_video=False
 )
@@ -237,8 +260,8 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
 #agent = AGENT_GEMINI_2_5_AX_LLM_M
 
-agent = AGENT_41_AX
-
+agent = AGENT_GEMINI_2_5_AX_AM_CACHED
+#agent = AGENT_GEMINI_2_5_NOH
 
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
 

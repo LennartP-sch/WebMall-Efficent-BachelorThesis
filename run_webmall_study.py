@@ -104,8 +104,23 @@ FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
 FLAGS_AX_ADV_LLM_M = FLAGS_AX_M.copy()
 FLAGS_AX_ADV_LLM_M.obs.use_amazone_and_model_ax_tree = True
 
+FLAGS_AX_AM = FLAGS_AX_M.copy()
+FLAGS_AX_AM.use_structured_memory = True
+
+FLAGS_AX_ADV_AM = FLAGS_AX_ADV_M.copy()
+FLAGS_AX_ADV_AM.use_structured_memory = True
+
+FLAGS_AX_AM_CACHED = FLAGS_AX_AM.copy()
+FLAGS_AX_AM_CACHED.adjusted_prompt_for_caching_am = True
+
+FLAGS_AX_ADV_AM_CACHED = FLAGS_AX_ADV_AM.copy()
+FLAGS_AX_ADV_AM_CACHED.adjusted_prompt_for_caching_am = True
+
+FLAGS_LLM_AX_AM = FLAGS_AX_LLM_M.copy()
+FLAGS_LLM_AX_AM.use_structured_memory = True
+
 AGENT_41_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/openai/gpt-4.1"], #"openai/gpt-4.1-2025-04-14"
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/openai/gpt-4.1-2025-04-14"], #"openai/gpt-4.1-2025-04-14"
     flags=FLAGS_AX_ADV_M,
 )
 
@@ -134,7 +149,7 @@ AGENT_CLAUDE_AX_V = GenericAgentArgs(
     flags=FLAGS_AX_V,
 )
 
-AGENT_41_AX_M = GenericAgentArgs(
+AGENT_GPT41_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
     flags=FLAGS_AX_M,
 )
@@ -209,26 +224,51 @@ AGENT_GEMINI_2_5_CHACHED_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_M_CACHED
 )
+AGENT_GEMINI_2_5_AX_ADJUSTED_MEMORY = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_AM
+)
+AGENT_GEMINI_2_5_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_ADV_AM
+)
+AGENT_GROK_4_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_AM
+)
+AGENT_GROK_4_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_ADV_AM
+)
+AGENT_41_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_AM,
+)
+AGENT_GEMINI_2_5_AX_AM_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_AM_CACHED
+)
 
-current_file = Path(__file__).resolve()
-PATH_TO_DOT_ENV_FILE = current_file.parent / ".env"
-load_dotenv(PATH_TO_DOT_ENV_FILE)
-
+AGENT_GEMINI_2_5_AX_ADV_AM_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_ADV_AM_CACHED
+)
+AGENT_GROK_4_LLM_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_LLM_AX_AM
+)
 
 # choose your agent or provide a new agent
-agent_args = [AGENT_GEMINI_2_5_FLASH_AX_ADV_M]
+agent_args = [AGENT_GROK_4_LLM_AX_AM]
 
-# ## select the benchmark to run on
-
-#benchmark = "webmall_v1.0"
+# ## select the benchmAGENT_GEMINI_2_5_AX_ADV_AMwebmall_v1.0"
 #benchmark = "webmall_basic_v1.0"
 #benchmark = "webmall_advanced_v1.0"
 #benchmark = "test"
 
 #WebMall Efficient Subset Benchmark
 #benchmark = "webmall_short_basic"
-benchmark = "webmall_short_advanced"
-
+#benchmark = "webmall_short_advanced"
 
 
 
@@ -243,7 +283,7 @@ reproducibility_mode = False
 relaunch = False
 
 ## Number of parallel jobs
-n_jobs = 4 # Make sure to use 1 job when debugging in VSCode
+n_jobs = 1 # Make sure to use 1 job when debugging in VSCode
 # n_jobs = -1  # to use all available cores
 
 
