@@ -70,205 +70,312 @@ FLAGS_default = GenericPromptFlags(
 
 FLAGS_AX = FLAGS_default.copy()
 
-FLAGS_V = FLAGS_default.copy()
-FLAGS_V.obs.use_screenshot = True
-FLAGS_V.obs.use_som = True
-FLAGS_V.obs.use_ax_tree = False
-
-FLAGS_AX_V = FLAGS_default.copy()
-FLAGS_AX_V.obs.use_screenshot = True
-FLAGS_AX_V.obs.use_som = True
-
+#AX_M (STANDARD FLAG)
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
 
-FLAGS_AX_M_CACHED = FLAGS_AX_M.copy()
-FLAGS_AX_M_CACHED.adjusted_prompt_for_caching = True
-
-FLAGS_HTML = FLAGS_default.copy()
-FLAGS_HTML.obs.use_html = True
-FLAGS_HTML.obs.use_ax_tree = False
-
-FLAGS_HTML_ADV = FLAGS_HTML.copy()
-FLAGS_HTML_ADV.obs.use_prune_advanced = True
-
+#PRUNNED AX
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
 FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = False
 FLAGS_AX_ADV_M.obs.use_ax_tree_amazon = True
 
-FLAGS_AX_LLM_M = FLAGS_AX_M.copy()
-FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
-# ✅ FIXED: Keep use_ax_tree=True (inherited from FLAGS_AX_M) so the pruned AXTree is visible to the agent
-# Previously had: FLAGS_AX_LLM_M.obs.use_ax_tree = False ← This made the AXTree invisible in the prompt!
-
-FLAGS_AX_ADV_LLM_M = FLAGS_AX_M.copy()
-FLAGS_AX_ADV_LLM_M.obs.use_amazone_and_model_ax_tree = True
-
+#AX-AM (Adjusted Memory)
 FLAGS_AX_AM = FLAGS_AX_M.copy()
 FLAGS_AX_AM.use_structured_memory = True
 
+#PRUNNED-AX-AM
 FLAGS_AX_ADV_AM = FLAGS_AX_ADV_M.copy()
 FLAGS_AX_ADV_AM.use_structured_memory = True
 
+#GF-AX (Auxiliary Model Axtree)
+FLAGS_AX_LLM_M = FLAGS_AX_M.copy()
+FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
+
+#GF-AX-AM (Auxiliary Model Axtree + Adjusted Memory)
+FLAGS_AX_LLM_AM = FLAGS_AX_LLM_M.copy()
+FLAGS_AX_LLM_AM.use_structured_memory = True
+
+#GF-PRUNNED-AX (Auxiliary Model Axtree)
+FLAGS_AX_ADV_LLM_M = FLAGS_AX_M.copy()
+FLAGS_AX_ADV_LLM_M.obs.use_amazone_and_model_ax_tree = True
+
+#GF-PRUNNED-AX-AM (Auxiliary Model Axtree + Adjusted Memory)
+FLAGS_AX_ADV_LLM_AM = FLAGS_AX_ADV_LLM_M.copy()
+FLAGS_AX_ADV_LLM_AM.use_structured_memory = True
+
+#AP (Adjusted Prompt for prefix caching)
+FLAGS_AX_M_CACHED = FLAGS_AX_M.copy()
+FLAGS_AX_M_CACHED.adjusted_prompt_for_caching = True
+
+#AP + AM (Adjusted Prompt for prefix caching + Adjusted Memory)
 FLAGS_AX_AM_CACHED = FLAGS_AX_AM.copy()
 FLAGS_AX_AM_CACHED.adjusted_prompt_for_caching_am = True
 
+#AP PRUNNED-AX-AM
 FLAGS_AX_ADV_AM_CACHED = FLAGS_AX_ADV_AM.copy()
 FLAGS_AX_ADV_AM_CACHED.adjusted_prompt_for_caching_am = True
 
-FLAGS_LLM_AX_AM = FLAGS_AX_LLM_M.copy()
-FLAGS_LLM_AX_AM.use_structured_memory = True
+#AP GF-PRUNNED-AX-AM
+FLAGS_AX_ADV_LLM_AM_CACHED = FLAGS_AX_ADV_LLM_AM.copy()
+FLAGS_AX_ADV_LLM_AM_CACHED.adjusted_prompt_for_caching_am = True
 
-AGENT_41_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/openai/gpt-4.1-2025-04-14"], #"openai/gpt-4.1-2025-04-14"
-    flags=FLAGS_AX_ADV_M,
-)
+#AGENTS
 
-AGENT_CLAUDE_AX = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["anthropic/claude-sonnet-4-20250514"],
-    flags=FLAGS_AX,
-)
-
-AGENT_41_V = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
-    flags=FLAGS_V,
-)
-
-AGENT_CLAUDE_V = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["anthropic/claude-sonnet-4-20250514"],
-    flags=FLAGS_V,
-)
-
-AGENT_41_AX_V = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
-    flags=FLAGS_AX_V,
-)
-
-AGENT_CLAUDE_AX_V = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["anthropic/claude-sonnet-4-20250514"],
-    flags=FLAGS_AX_V,
-)
-
-AGENT_GPT41_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
-    flags=FLAGS_AX_M,
-)
-
-AGENT_CLAUDE_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["anthropic/claude-sonnet-4-20250514"],
-    flags=FLAGS_AX_M,
-)
-AGENT_GROK_4_FAST_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
-    flags=FLAGS_AX_M,
-)
-AGENT_GROK_4_FAST_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
-    flags=FLAGS_AX_ADV_M,
-)
-AGENT_GEMINI_2_5_FLASH_AX_M = GenericAgentArgs(
+## Gemini 2.5 Flash Agents
+AGENT_GEMINI_2_5_AX_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_M,
 )
-AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
+AGENT_GEMINI_2_5_AX_M.agent_name = "AGENT_GEMINI_2_5_AX_M"
+
+AGENT_GEMINI_2_5_AX_ADV_M = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_ADV_M,
 )
-AGENT_GEMINI_2_5_FLASH_HTML = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_HTML,
-)
-AGENT_GEMINI_2_5_FLASH_ADV_HTML = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_HTML_ADV,
-)
-AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
-    flags=FLAGS_AX_M
-)
-AGENT_GEMINI_2_5_PRO_AX_M_CACHED = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
-    flags=FLAGS_AX_M_CACHED
-)
-AGENT_GEMINI_2_5_PRO_LLM_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
-    flags=FLAGS_AX_LLM_M
-)
-AGENT_GEMINI_2_5_FLASH_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_AX_ADV_M,
-)
+AGENT_GEMINI_2_5_AX_ADV_M.agent_name = "AGENT_GEMINI_2_5_AX_ADV_M"
 
-AGENT_GEMINI_2_5_FLASH_LLM_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_AX_LLM_M
-)
-AGENT_GEMINI_2_5_PRO_AX_ADV_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
-    flags=FLAGS_AX_ADV_M
-)
-AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
-    flags=FLAGS_AX_ADV_LLM_M
-)
-AGENT_GROK_4_FAST_LLM_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
-    flags=FLAGS_AX_LLM_M
-)
-AGENT_GROK_4_FAST_AX_ADV_LLM_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
-    flags=FLAGS_AX_ADV_LLM_M
-)
-
-AGENT_GEMINI_2_5_CHACHED_AX_M = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_AX_M_CACHED
-)
-AGENT_GEMINI_2_5_AX_ADJUSTED_MEMORY = GenericAgentArgs(
+AGENT_GEMINI_2_5_AX_AM = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_AM
 )
+AGENT_GEMINI_2_5_AX_AM.agent_name = "AGENT_GEMINI_2_5_AX_AM"
+
 AGENT_GEMINI_2_5_AX_ADV_AM = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
     flags=FLAGS_AX_ADV_AM
 )
+AGENT_GEMINI_2_5_AX_ADV_AM.agent_name = "AGENT_GEMINI_2_5_AX_ADV_AM"
+
+AGENT_GEMINI_2_5_CACHED_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_M_CACHED
+)
+AGENT_GEMINI_2_5_CACHED_AX_M.agent_name = "AGENT_GEMINI_2_5_CACHED_AX_M"
+
+AGENT_GEMINI_2_5_CACHED_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_AM_CACHED
+)
+AGENT_GEMINI_2_5_CACHED_AX_AM.agent_name = "AGENT_GEMINI_2_5_CACHED_AX_AM"
+
+AGENT_GEMINI_2_5_CACHED_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_ADV_AM_CACHED
+)
+AGENT_GEMINI_2_5_CACHED_AX_ADV_AM.agent_name = "AGENT_GEMINI_2_5_CACHED_AX_ADV_AM"
+
+
+## Gemini 2.5 Pro Agents
+
+AGENT_GEMINI_2_5_PRO_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_M
+)
+AGENT_GEMINI_2_5_PRO_AX_M.agent_name = "AGENT_GEMINI_2_5_PRO_AX_M"
+
+AGENT_GEMINI_2_5_PRO_AX_M_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_M_CACHED
+)
+AGENT_GEMINI_2_5_PRO_AX_M_CACHED.agent_name = "AGENT_GEMINI_2_5_PRO_AX_M_CACHED"
+
+AGENT_GEMINI_2_5_PRO_LLM_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_LLM_M
+)
+AGENT_GEMINI_2_5_PRO_LLM_AX_M.agent_name = "AGENT_GEMINI_2_5_PRO_LLM_AX_M"
+
+AGENT_GEMINI_2_5_PRO_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_ADV_M
+)
+AGENT_GEMINI_2_5_PRO_AX_ADV_M.agent_name = "AGENT_GEMINI_2_5_PRO_AX_ADV_M"
+
+AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_ADV_LLM_M
+)
+AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M.agent_name = "AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M"
+
+## Grok 4 Fast (non-reasoning) Agents
+
+AGENT_GROK_4_FAST_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_M,
+)
+AGENT_GROK_4_FAST_AX_M.agent_name = "AGENT_GROK_4_FAST_AX_M"
+
+AGENT_GROK_4_FAST_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_ADV_M,
+)
+AGENT_GROK_4_FAST_AX_ADV_M.agent_name = "AGENT_GROK_4_FAST_AX_ADV_M"
+
 AGENT_GROK_4_AX_AM = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
     flags=FLAGS_AX_AM
 )
+AGENT_GROK_4_AX_AM.agent_name = "AGENT_GROK_4_AX_AM"
+
 AGENT_GROK_4_AX_ADV_AM = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
     flags=FLAGS_AX_ADV_AM
 )
-AGENT_41_AX_AM = GenericAgentArgs(
+AGENT_GROK_4_AX_ADV_AM.agent_name = "AGENT_GROK_4_AX_ADV_AM"
+
+AGENT_GROK_4_FAST_LLM_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_LLM_M
+)
+AGENT_GROK_4_FAST_LLM_AX_M.agent_name = "AGENT_GROK_4_FAST_LLM_AX_M"
+
+AGENT_GROK_4_FAST_AX_ADV_LLM_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_ADV_LLM_M
+)
+AGENT_GROK_4_FAST_AX_ADV_LLM_M.agent_name = "AGENT_GROK_4_FAST_AX_ADV_LLM_M"
+
+AGENT_GROK_4_LLM_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_LLM_AM
+)
+AGENT_GROK_4_LLM_AX_AM.agent_name = "AGENT_GROK_4_LLM_AX_AM"
+
+AGENT_GROK_4_LLM_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
+    flags=FLAGS_AX_ADV_LLM_AM
+)
+AGENT_GROK_4_LLM_AX_ADV_AM.agent_name = "AGENT_GROK_4_LLM_AX_ADV_AM"
+
+## GPT-4.1 Agents - Auxiliary Model is gpt-4.1-mini-2025-04-14
+
+
+
+AGENT_GPT_41_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_M,
+)
+AGENT_GPT_41_AX_M.agent_name = "AGENT_GPT_41_AX_M"
+
+AGENT_GPT_41_AX_ADV_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"], 
+    flags=FLAGS_AX_ADV_M,
+)
+AGENT_GPT_41_AX_ADV_M.agent_name = "AGENT_GPT_41_AX_ADV_M"
+
+AGENT_GPT_41_AX_AM = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
     flags=FLAGS_AX_AM,
 )
-AGENT_GEMINI_2_5_AX_AM_CACHED = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_AX_AM_CACHED
+AGENT_GPT_41_AX_AM.agent_name = "AGENT_GPT_41_AX_AM"
+
+AGENT_GPT_41_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_ADV_AM,
 )
+AGENT_GPT_41_AX_ADV_AM.agent_name = "AGENT_GPT_41_AX_ADV_AM"
 
-AGENT_GEMINI_2_5_AX_ADV_AM_CACHED = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
-    flags=FLAGS_AX_ADV_AM_CACHED
+AGENT_GPT_41_LLM_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_LLM_M,
 )
-AGENT_GROK_4_LLM_AX_AM = GenericAgentArgs(
-    chat_model_args=CHAT_MODEL_ARGS_DICT["openrouter/x-ai/grok-4-fast"],
-    flags=FLAGS_LLM_AX_AM
+AGENT_GPT_41_LLM_AX_M.agent_name = "AGENT_GPT_41_LLM_AX_M"
+
+AGENT_GPT_41_AX_ADV_LLM_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_ADV_LLM_M,
 )
+AGENT_GPT_41_AX_ADV_LLM_M.agent_name = "AGENT_GPT_41_AX_ADV_LLM_M"
 
-# choose your agent or provide a new agent
-agent_args = [AGENT_GROK_4_LLM_AX_AM]
+AGENT_GPT_41_LLM_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_LLM_AM,
+)
+AGENT_GPT_41_LLM_AX_AM.agent_name = "AGENT_GPT_41_LLM_AX_AM"
 
-# ## select the benchmAGENT_GEMINI_2_5_AX_ADV_AMwebmall_v1.0"
-#benchmark = "webmall_basic_v1.0"
-#benchmark = "webmall_advanced_v1.0"
-#benchmark = "test"
+AGENT_GPT_41_LLM_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_ADV_LLM_AM,
+)
+AGENT_GPT_41_LLM_AX_ADV_AM.agent_name = "AGENT_GPT_41_LLM_AX_ADV_AM"
 
-#WebMall Efficient Subset Benchmark
+AGENT_GPT_41_CACHED_AX_M = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_M_CACHED,
+)
+AGENT_GPT_41_CACHED_AX_M.agent_name = "AGENT_GPT_41_CACHED_AX_M"
+
+AGENT_GPT_41_CACHED_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_AM_CACHED,
+)
+AGENT_GPT_41_CACHED_AX_AM.agent_name = "AGENT_GPT_41_CACHED_AX_AM"
+
+AGENT_GPT_41_CACHED_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_ADV_AM_CACHED,
+)
+AGENT_GPT_41_CACHED_AX_ADV_AM.agent_name = "AGENT_GPT_41_CACHED_AX_ADV_AM"
+
+AGENT_GPT_41_CACHED_LLM_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_ADV_LLM_AM_CACHED,
+)
+AGENT_GPT_41_CACHED_LLM_AX_AM.agent_name = "AGENT_GPT_41_CACHED_LLM_AX_AM"
+
+
+#========================================================================================================================
+#   CONFIGUARATION PART START
+#========================================================================================================================
+
+# These are the combinations a runed on Gemini 2.5 flash and Grok 4 fast:
+
+
+## AGENT_GPT_41_AX_M i already run it arleady myself - cost me about 10.64$
+## ich denke wenn man alles wie in der liste laufen lässt wird es an die 100$ kosten
+## Also wenn das budget dann zu knapp ist, wähle ich noch ein paar aus die weniger priorität haben.
+
+
+agents_to_run = [
+
+    AGENT_GPT_41_AX_ADV_M,
+    AGENT_GPT_41_AX_AM,
+    AGENT_GPT_41_AX_ADV_AM,
+    AGENT_GPT_41_LLM_AX_M,
+    AGENT_GPT_41_AX_ADV_LLM_M,
+    AGENT_GPT_41_LLM_AX_AM,
+    AGENT_GPT_41_LLM_AX_ADV_AM,
+    AGENT_GPT_41_CACHED_AX_M,
+    AGENT_GPT_41_CACHED_AX_AM,
+    AGENT_GPT_41_CACHED_AX_ADV_AM,
+
+    #Everthing combined:
+    AGENT_GPT_41_CACHED_LLM_AX_AM     
+]
+
+
+# choose your agent
+# Start with AGENT_GPT_41_AX_ADV_M
+agent_args = [AGENT_GPT_41_AX_ADV_M]
+
+#For each agent in agents_to_run, run webmall_short_basic and webmall_short_advanced
+
+benchmark = "test"
 #benchmark = "webmall_short_basic"
 #benchmark = "webmall_short_advanced"
+
+## Number of parallel jobs
+n_jobs = 4 
+# n_jobs = -1  # to use all available cores
+
+#========================================================================================================================
+#   CONFIGUARATION PART END
+#========================================================================================================================
+
+
+# Set relaunch = True to relaunch an existing study, this will continue incomplete
+# experiments and relaunch errored experiments
+relaunch = False
 
 
 
@@ -278,13 +385,7 @@ agent_args = [AGENT_GROK_4_LLM_AX_AM]
 # local changes. For your custom agents you need to implement set_reproducibility_mode
 reproducibility_mode = False
 
-# Set relaunch = True to relaunch an existing study, this will continue incomplete
-# experiments and relaunch errored experiments
-relaunch = False
 
-## Number of parallel jobs
-n_jobs = 1 # Make sure to use 1 job when debugging in VSCode
-# n_jobs = -1  # to use all available cores
 
 
 if __name__ == "__main__":  # necessary for dask backend

@@ -258,9 +258,9 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_GEMINI_2_5_FLASH_AX_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_ADV_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
-#agent = AGENT_GEMINI_2_5_AX_LLM_M
+agent = AGENT_GEMINI_2_5_AX_LLM_M
 
-agent = AGENT_GEMINI_2_5_AX_AM_CACHED
+#agent = AGENT_GEMINI_2_5_AX_AM_CACHED
 #agent = AGENT_GEMINI_2_5_NOH
 
 agent.set_benchmark(bgym.DEFAULT_BENCHMARKS["webarena"](), demo_mode="off")
