@@ -564,7 +564,7 @@ def aux_model_pruning(
         cexample=concrete_ex,
         goal=goal,
         #url=url,
-        message=last_context,  # ✅ Verwende Thought oder Action
+        message=last_context,  
         axtree=numbered_axtree
     )
         
