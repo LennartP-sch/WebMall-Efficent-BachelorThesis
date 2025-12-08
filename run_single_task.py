@@ -27,7 +27,6 @@ from agentlab.agents.dynamic_prompting import print_final_pruning_stats
 
 FLAGS_default = GenericPromptFlags(
     obs=dp.ObsFlags(
-        use_ax_tree_advanced= False,
         use_html=False,
         use_ax_tree=True,
         use_focused_element=True,
@@ -64,7 +63,6 @@ FLAGS_default = GenericPromptFlags(
     max_prompt_tokens=60_000,
     be_cautious=True,
     extra_instructions=None,
-    #use_chaching_adjusted_prompt=False,  # Set to True to test cache-optimized prompts
     )
 
 FLAGS_AX = FLAGS_default.copy()
@@ -83,6 +81,10 @@ FLAGS_AX_V.obs.use_som = True
 FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
 
+FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
+FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = False
+FLAGS_AX_ADV_M.obs.use_ax_tree_amazon = True
+
 FLAGSTEST = FLAGS_AX_M.copy()
 FLAGSTEST.obs.use_action_history = False
 
@@ -90,13 +92,12 @@ FLAGS_AX_M_CACHED = FLAGS_AX_M.copy()
 FLAGS_AX_M_CACHED.adjusted_prompt_for_caching = True
 
 FLAGS_AX_COPY_M = FLAGS_AX_M.copy()
+FLAGS_AX_COPY_M.obs.use_ax_tree_advanced = False
 FLAGS_AX_COPY_M.obs.use_ax_tree_amazon = True
 
 FLAGS_AX_LLM_M = FLAGS_AX_M.copy()
 FLAGS_AX_LLM_M.obs.use_model_ax_tree = True
 
-FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
-#FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = True
 
 FLAGS_AX_M_ADJUSTED_MEMORY = FLAGS_AX_M.copy()
 FLAGS_AX_M_ADJUSTED_MEMORY.use_structured_memory = True
@@ -242,7 +243,7 @@ AGENT_GEMINI_2_5_AX_AM_CACHED = GenericAgentArgs(
 
 # example for a single task
 env_args = EnvArgsWebMall(
-    task_name="webmall.Webmall_Products_Fulfilling_Specific_Requirements_Task9",
+    task_name="webmall.Webmall_Find_Specific_Product_Task7",
     task_seed=22,
     max_steps=50,
     headless=True,
@@ -258,7 +259,7 @@ env_args = EnvArgsWebMall(
 #agent = AGENT_GEMINI_2_5_FLASH_AX_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_ADV_M
 #agent = AGENT_GEMINI_2_5_FLASH_AX_COPY_M
-agent = AGENT_GEMINI_2_5_AX_LLM_M
+agent = AGENT_GEMINI_2_5_AX_M
 
 #agent = AGENT_GEMINI_2_5_AX_AM_CACHED
 #agent = AGENT_GEMINI_2_5_NOH
@@ -276,6 +277,15 @@ exp_args = [
 current_file = Path(__file__).resolve()
 PATH_TO_DOT_ENV_FILE = current_file.parent / ".env"
 load_dotenv(PATH_TO_DOT_ENV_FILE)
+
+# ============================================================================
+# ENABLE ACCESSIBILITY TREE EXTRACTION (Optional)
+# ============================================================================
+# Uncomment these lines to enable extraction of accessibility trees with token counts:
+import os
+os.environ["EXTRACT_AXTREE_OBSERVATIONS"] = "true"
+# os.environ["AXTREE_OUTPUT_DIR"] = "axtree_observations"  # Optional: custom output directory
+# ============================================================================
 
 if __name__ == "__main__":
     run_experiments(n_jobs=1, exp_args_list=exp_args, study_dir="task_results", parallel_backend="sequential")

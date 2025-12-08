@@ -1,0 +1,179 @@
+================================================================================
+SYSTEM PROMPT
+================================================================================
+
+You are an agent trying to solve a web task based on the content of the page and
+user instructions. You can interact with the page and explore, and send messages to the user. Each time you
+submit an action it will be sent to the browser and you will receive a new page.
+
+================================================================================
+HUMAN PROMPT (Step 1)
+================================================================================
+
+# Instructions
+Review the current state of the page and all other information to find the best
+possible next action to accomplish your goal. Your answer will be interpreted
+and executed by a program, make sure to follow the formatting instructions.
+
+## Goal:
+
+<instructions>
+Solve the task below using these four webshops:
+
+E-Store Athletes: https://webmall-1.informatik.uni-mannheim.de
+TechTalk: https://webmall-2.informatik.uni-mannheim.de
+CamelCases: https://webmall-3.informatik.uni-mannheim.de
+Hardware Cafe: https://webmall-4.informatik.uni-mannheim.de
+
+After solving the task, submit the final result by first navigating to this page:
+
+Solution page: https://webmall-0.informatik.uni-mannheim.de
+
+Then fill the final results into the text field on the solution page and press the "Submit Final Result" button.
+
+If the result is one or more product offers enter their exact full URL(s) into the text field separated by three ### characters.
+Example submission:
+Offer1: https://webmall-1.informatik.uni-mannheim.de/product/tp-link-ha100-bluetooth-nfc-music-receiver-provides-wireless-connectivity-to-your-stereo/###Offer2: https://webmall-3.informatik.uni-mannheim.de/product/spire-usb-2-0-type-a-cable-male-to-male-1-metre/###Offer3: https://webmall-2.informatik.uni-mannheim.de/product/sandberg-usb-c-pd-to-lightning-cable-braided-1-meter-white/
+
+If the result is any other kind of value(s), input the value(s) into the text field.
+
+If there is no result to return after completion of the task, simply enter "Done" into the text field.
+
+Do not forget to press the "Submit Final Result" button in all cases!
+</instructions>
+
+<task>
+Find all offers for the Asrock B550 PHANTOM GAMING 4.
+</task>
+
+# Observation of current step:
+
+## Currently open tabs:
+Tab 0:
+    Title: WebMall - Submit Final Result
+    URL: https://webmall-0.informatik.uni-mannheim.de/
+
+Tab 1 (active tab):
+    Title: 
+    URL: about:blank
+
+## AXTree:
+Note: [bid] is the unique alpha-numeric identifier at the beginning of lines for each element in the AXTree. Always use bid to refer to elements in your actions.
+
+Note: You can only interact with visible elements. If the "visible" tag is not
+present, the element is not visible on the page.
+
+RootWebArea '', focused
+
+## Focused element:
+bid='2'
+
+
+# History of interaction with the task:
+
+## step 0
+
+<think>
+I need to find offers for "Asrock B550 PHANTOM GAMING 4" on four different webshops. I am currently on the solution page. My first step is to open a new tab and navigate to the first webshop: E-Store Athletes.
+</think>
+
+<action>
+new_tab()
+</action>
+
+<memory>
+Webshops to check:
+1. E-Store Athletes: https://webmall-1.informatik.uni-mannheim.de
+2. TechTalk: https://webmall-2.informatik.uni-mannheim.de
+3. CamelCases: https://webmall-3.informatik.uni-mannheim.de
+4. Hardware Cafe: https://webmall-4.informatik.uni-mannheim.de
+
+Product to search for: "Asrock B550 PHANTOM GAMING 4"
+</memory>
+
+# Action space:
+Note: This action set allows you to interact with your environment. Most of them
+are python function executing playwright code. The primary way of referring to
+elements in the page is through bid which are specified in your observations.
+
+
+15 different types of actions are available.
+
+noop(wait_ms: float = 1000)
+scroll(delta_x: float, delta_y: float)
+keyboard_press(key: str)
+click(bid: str, button: Literal['left', 'middle', 'right'] = 'left', modifiers: list[typing.Literal['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']] = [])
+fill(bid: str, value: str)
+hover(bid: str)
+tab_focus(index: int)
+new_tab()
+go_back()
+go_forward()
+goto(url: str)
+tab_close()
+select_option(bid: str, options: str | list[str])
+send_msg_to_user(text: str)
+report_infeasible(reason: str)
+Only a single action can be provided at once. Example:
+fill('a12', 'example with "quotes"')
+
+Note:
+* Some tasks may be game like and may require to interact with the mouse position
+in x, y coordinates.
+* Some text field might have auto completion. To see it, you have to type a few
+characters and wait until next step.
+* If you have to cut and paste, don't forget to select the text first.
+* Coordinate inside an SVG are relative to it's top left corner.
+* Make sure to use bid to identify elements when using commands.
+* Interacting with combobox, dropdowns and auto-complete fields can be tricky,
+sometimes you need to use select_option, while other times you need to use fill
+or click and wait for the reaction of the page.
+
+
+# Abstract Example
+
+Here is an abstract version of the answer with description of the content of
+each tag. Make sure you follow this structure, but replace the content with your
+answer:
+
+<think>
+Think step by step. If you need to make calculations such as coordinates, write them here. Describe the effect
+that your previous action had on the current content of the page.
+</think>
+
+<memory>
+Write down anything you need to remember for next steps. You will be presented
+with the list of previous memories and past actions. Some tasks require to
+remember hints from previous steps in order to solve it.
+</memory>
+
+<action>
+One single action to be executed. You can only use one action at a time.
+</action>
+
+
+# Concrete Example
+
+Here is a concrete example of how to format your answer.
+Make sure to follow the template with proper tags:
+
+<think>
+From previous action I tried to set the value of year to "2022",
+using select_option, but it doesn't appear to be in the form. It may be a
+dynamic dropdown, I will try using click with the bid "a324" and look at the
+response from the page.
+</think>
+
+<memory>
+I clicked on bid "32" to activate tab 2. The accessibility tree should mention
+focusable for elements of the form at next step.
+</memory>
+
+<action>
+click('a324')
+</action>
+
+
+================================================================================
+END OF PROMPT
+================================================================================

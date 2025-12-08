@@ -15,11 +15,6 @@ Supported APIs:
 - OpenRouter (Claude, Gemini, Llama, DeepSeek, etc.)
 - Google AI Studio (Gemini 2.5 Flash, Gemini 1.5 Pro, etc.)
 
-
-SOTA -2k Tokens ist halt mega wenig
-TODO
-1. test machen
-
 """
 
 import json

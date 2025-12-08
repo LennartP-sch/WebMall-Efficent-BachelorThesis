@@ -26,7 +26,7 @@ from agentlab.agents import dynamic_prompting as dp
 from agentlab.llm.llm_configs import CHAT_MODEL_ARGS_DICT
 
 from agentlab.agents.generic_agent.generic_agent import  GenericPromptFlags, GenericAgentArgs
-from agentlab.agents.dynamic_prompting import print_final_pruning_stats
+
 
 FLAGS_default = GenericPromptFlags(
     obs=dp.ObsFlags(
@@ -119,6 +119,11 @@ FLAGS_AX_ADV_AM_CACHED.adjusted_prompt_for_caching_am = True
 FLAGS_AX_ADV_LLM_AM_CACHED = FLAGS_AX_ADV_LLM_AM.copy()
 FLAGS_AX_ADV_LLM_AM_CACHED.adjusted_prompt_for_caching_am = True
 
+#AP -PRUNNED-AX-M
+FLAGS_AX_ADV_CACHED = FLAGS_AX_ADV_M.copy()
+FLAGS_AX_ADV_CACHED.adjusted_prompt_for_caching = True
+#========================================================================================================================
+#   AGENT DEFINITIONS START
 #AGENTS
 
 ## Gemini 2.5 Flash Agents
@@ -164,6 +169,12 @@ AGENT_GEMINI_2_5_CACHED_AX_ADV_AM = GenericAgentArgs(
 )
 AGENT_GEMINI_2_5_CACHED_AX_ADV_AM.agent_name = "AGENT_GEMINI_2_5_CACHED_AX_ADV_AM"
 
+AGENT_GEMINI_2_5_CACHED_AX_ADV = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-flash"],
+    flags=FLAGS_AX_ADV_CACHED
+)   
+AGENT_GEMINI_2_5_CACHED_AX_ADV.agent_name = "AGENT_GEMINI_2_5_CACHED_AX_ADV_M"
+
 
 ## Gemini 2.5 Pro Agents
 
@@ -196,6 +207,37 @@ AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M = GenericAgentArgs(
     flags=FLAGS_AX_ADV_LLM_M
 )
 AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M.agent_name = "AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M"
+
+AGENT_GEMINI_2_5_PRO_AX_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_AM
+)
+AGENT_GEMINI_2_5_PRO_AX_AM.agent_name = "AGENT_GEMINI_2_5_PRO_AX_AM"
+
+AGENT_GEMINI_2_5_PRO_AX_ADV_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_ADV_CACHED
+)
+AGENT_GEMINI_2_5_PRO_AX_ADV_CACHED.agent_name = "AGENT_GEMINI_2_5_PRO_AX_ADV_CACHED_M"
+
+
+AGENT_GEMINI_PRO_2_5_PRO_AX_ADV_AM_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_ADV_AM_CACHED
+)   
+AGENT_GEMINI_PRO_2_5_PRO_AX_ADV_AM_CACHED.agent_name = "AGENT_GEMINI_PRO_2_5_PRO_AX_ADV_AM_CACHED"
+
+AGENT_GEMINI_2_5_PRO_AX_ADV_AM = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_ADV_AM
+)
+AGENT_GEMINI_2_5_PRO_AX_ADV_AM.agent_name = "AGENT_GEMINI_2_5_PRO_AX_ADV_AM"
+
+AGENT_2_5_PRO_AX_AM_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["gemini-2.5-pro"],
+    flags=FLAGS_AX_AM_CACHED
+)
+AGENT_2_5_PRO_AX_AM_CACHED.agent_name = "AGENT_2_5_PRO_AX_AM_CACHED"
 
 ## Grok 4 Fast (non-reasoning) Agents
 
@@ -323,6 +365,12 @@ AGENT_GPT_41_CACHED_LLM_AX_AM = GenericAgentArgs(
 )
 AGENT_GPT_41_CACHED_LLM_AX_AM.agent_name = "AGENT_GPT_41_CACHED_LLM_AX_AM"
 
+AGENT_GPT_41_CACHED_AX_ADV_CACHED = GenericAgentArgs(
+    chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
+    flags=FLAGS_AX_ADV_CACHED,
+)
+AGENT_GPT_41_CACHED_AX_ADV_CACHED.agent_name = "GPT.41-APSAX"
+
 
 #========================================================================================================================
 #   CONFIGUARATION PART START
@@ -356,16 +404,16 @@ agents_to_run = [
 
 # choose your agent
 # Start with AGENT_GPT_41_AX_ADV_M
-agent_args = [AGENT_GPT_41_AX_ADV_M]
+agent_args = [AGENT_GPT_41_CACHED_AX_ADV_CACHED] 
 
 #For each agent in agents_to_run, run webmall_short_basic and webmall_short_advanced
 
-benchmark = "test"
+benchmark = "retry"
 #benchmark = "webmall_short_basic"
 #benchmark = "webmall_short_advanced"
 
 ## Number of parallel jobs
-n_jobs = 4 
+n_jobs = 1 
 # n_jobs = -1  # to use all available cores
 
 #========================================================================================================================

@@ -416,7 +416,7 @@ WEBMALL_BENCHMARKS = {
         ),
         task_metadata=task_metadata("webmall"),
     ),
-    "test": lambda: WebMallBenchmark(
+    "retry": lambda: WebMallBenchmark(
         name="test",
         high_level_action_set_args=DEFAULT_HIGHLEVEL_ACTION_SET_ARGS["webarena"],
         is_multi_tab=True,
@@ -424,7 +424,8 @@ WEBMALL_BENCHMARKS = {
         backends=["webmall"],
         env_args_list=make_env_args_list_from_repeat_tasks(
             task_list=[
-                "webmall.Webmall_Products_Fulfilling_Specific_Requirements_Task5",
+                "webmall.Webmall_Products_Fulfilling_Specific_Requirements_Task8", 
+                "webmall.Webmall_Products_Fulfilling_Specific_Requirements_Task9",  
             ],
             max_steps=50,
             n_repeats=1,

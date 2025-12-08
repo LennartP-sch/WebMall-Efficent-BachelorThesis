@@ -1,0 +1,633 @@
+================================================================================
+SYSTEM PROMPT
+================================================================================
+
+You are an agent trying to solve a web task based on the content of the page and
+user instructions. You can interact with the page and explore, and send messages to the user. Each time you
+submit an action it will be sent to the browser and you will receive a new page.
+
+================================================================================
+HUMAN PROMPT (Step 7)
+================================================================================
+
+# Instructions
+Review the current state of the page and all other information to find the best
+possible next action to accomplish your goal. Your answer will be interpreted
+and executed by a program, make sure to follow the formatting instructions.
+
+## Goal:
+
+<instructions>
+Solve the task below using these four webshops:
+
+E-Store Athletes: https://webmall-1.informatik.uni-mannheim.de
+TechTalk: https://webmall-2.informatik.uni-mannheim.de
+CamelCases: https://webmall-3.informatik.uni-mannheim.de
+Hardware Cafe: https://webmall-4.informatik.uni-mannheim.de
+
+After solving the task, submit the final result by first navigating to this page:
+
+Solution page: https://webmall-0.informatik.uni-mannheim.de
+
+Then fill the final results into the text field on the solution page and press the "Submit Final Result" button.
+
+If the result is one or more product offers enter their exact full URL(s) into the text field separated by three ### characters.
+Example submission:
+Offer1: https://webmall-1.informatik.uni-mannheim.de/product/tp-link-ha100-bluetooth-nfc-music-receiver-provides-wireless-connectivity-to-your-stereo/###Offer2: https://webmall-3.informatik.uni-mannheim.de/product/spire-usb-2-0-type-a-cable-male-to-male-1-metre/###Offer3: https://webmall-2.informatik.uni-mannheim.de/product/sandberg-usb-c-pd-to-lightning-cable-braided-1-meter-white/
+
+If the result is any other kind of value(s), input the value(s) into the text field.
+
+If there is no result to return after completion of the task, simply enter "Done" into the text field.
+
+Do not forget to press the "Submit Final Result" button in all cases!
+</instructions>
+
+<task>
+Find all offers for the Asrock B550 PHANTOM GAMING 4.
+</task>
+
+# Observation of current step:
+
+## Currently open tabs:
+Tab 0:
+    Title: WebMall - Submit Final Result
+    URL: https://webmall-0.informatik.uni-mannheim.de/
+
+Tab 1 (active tab):
+    Title: TechTalk
+    URL: https://webmall-2.informatik.uni-mannheim.de/
+
+## AXTree:
+Note: [bid] is the unique alpha-numeric identifier at the beginning of lines for each element in the AXTree. Always use bid to refer to elements in your actions.
+
+Note: You can only interact with visible elements. If the "visible" tag is not
+present, the element is not visible on the page.
+
+RootWebArea 'TechTalk', focused
+	[71] link 'Skip to content', clickable
+	[72] banner '', visible
+		[78] list '', visible
+			[79] listitem '', visible
+				[80] link 'All Products', clickable, visible
+			[81] listitem '', visible
+				StaticText '|'
+				[82] link 'Cart', clickable, visible
+			[83] listitem '', visible
+				StaticText '|'
+				[84] link 'Checkout', clickable, visible
+			[85] listitem '', visible
+				StaticText '|'
+				[86] link 'Landing', clickable, visible
+			[87] listitem '', visible
+				StaticText '|'
+				[88] link 'My account', clickable, visible
+			[89] listitem '', visible
+				StaticText '|'
+				[90] link 'Sale', clickable, visible
+		[96] heading 'TechTalk', visible
+			[97] link 'TechTalk', clickable, visible
+		[102] button 'search form toggle', clickable, visible, expanded=False
+			[103] image 'Search Icon', visible
+		[133] navigation '', visible
+			[136] list '', visible
+				[137] listitem '', visible
+					[138] link 'Main Product Categories', clickable, visible
+						[139] image '', visible
+			[232] Section '', visible
+				[234] textbox 'Search products...', clickable, visible, focused
+					StaticText 'Asrock B550 PHANTOM GAMING 4'
+				[282] button '', clickable, visible
+			[287] link 'My Account', clickable, visible
+				[288] image '', visible
+			[293] link '0 €0.00', clickable, visible
+				[294] image '', visible
+				StaticText '0'
+				StaticText '€0.00'
+	[307] article ''
+		[309] heading 'Landing', visible
+		[313] heading 'On sale products', visible
+		[314] list '', visible
+			[315] listitem '', visible
+				[317] link 'PRODUCT ON SALE Apple Watch Series 8 GPS + Cellular 45mm Graphite Stainless Steel Case with Midnight Sport Band - Regular', clickable, visible
+					StaticText 'PRODUCT ON SALE'
+					[321] image 'Apple Watch Series 8 GPS + Cellular 45mm Graphite Stainless Steel Case with Midnight Sport Band - Regular', visible
+				[322] heading 'Apple Watch Series 8 GPS + Cellular 45mm Graphite Stainless Steel Case with Midnight Sport Band – Regular', visible
+					[323] link 'Apple Watch Series 8 GPS + Cellular 45mm Graphite Stainless Steel Case with Midnight Sport Band – Regular', clickable, visible
+				StaticText 'Original price was: €320.00.'
+				StaticText 'Current price is: €300.00.'
+				[336] link '\ue906', clickable, visible
+					StaticText '\ue906'
+				[338] link '\ue92c', clickable, visible
+					StaticText '\ue92c'
+				[341] link 'Add to cart: “Apple Watch Series 8 GPS + Cellular 45mm Graphite Stainless Steel Case with Midnight Sport Band - Regular”', clickable, visible
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[345] listitem '', visible
+				[347] link 'PRODUCT ON SALE Canon EOS R5 C (body only)', clickable, visible
+					StaticText 'PRODUCT ON SALE'
+					[351] image 'Canon EOS R5 C (body only)', visible
+				[352] heading 'Canon EOS R5 C (body only)', visible
+					[353] link 'Canon EOS R5 C (body only)', clickable, visible
+				StaticText 'Original price was: €4499.00.'
+				StaticText 'Current price is: €4490.00.'
+				[366] link '\ue906', clickable, visible
+					StaticText '\ue906'
+				[368] link '\ue92c', clickable, visible
+					StaticText '\ue92c'
+				[371] link 'Add to cart: “Canon EOS R5 C (body only)”', clickable, visible
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[375] listitem '', visible
+				[377] link 'PRODUCT ON SALE Jedel DisplayPort Male to HDMI Female Converter Cable, Black', clickable, visible
+					StaticText 'PRODUCT ON SALE'
+					[381] image 'Jedel DisplayPort Male to HDMI Female Converter Cable, Black', visible
+				[382] heading 'Jedel DisplayPort Male to HDMI Female Converter Cable, Black', visible
+					[383] link 'Jedel DisplayPort Male to HDMI Female Converter Cable, Black', clickable, visible
+				StaticText 'Original price was: €3.25.'
+				StaticText 'Current price is: €3.00.'
+				[396] link '\ue906', clickable, visible
+					StaticText '\ue906'
+				[398] link '\ue92c', clickable, visible
+					StaticText '\ue92c'
+				[401] link 'Add to cart: “Jedel DisplayPort Male to HDMI Female Converter Cable, Black”', clickable, visible
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[405] listitem '', visible
+				[407] link 'PRODUCT ON SALE Sandberg DisplayPort Male to Female HDMI Converter Cable, Black, 5 Year Warranty', clickable, visible
+					StaticText 'PRODUCT ON SALE'
+					[411] image 'Sandberg DisplayPort Male to Female HDMI Converter Cable, Black, 5 Year Warranty', visible
+				[412] heading 'Sandberg DisplayPort Male to Female HDMI Converter Cable, Black, 5 Year Warranty', visible
+					[413] link 'Sandberg DisplayPort Male to Female HDMI Converter Cable, Black, 5 Year Warranty', clickable, visible
+				StaticText 'Original price was: €5.04.'
+				StaticText 'Current price is: €4.99.'
+				[426] link '\ue906', clickable, visible
+					StaticText '\ue906'
+				[428] link '\ue92c', clickable, visible
+					StaticText '\ue92c'
+				[431] link 'Add to cart: “Sandberg DisplayPort Male to Female HDMI Converter Cable, Black, 5 Year Warranty”', clickable, visible
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[435] listitem '', visible
+				[437] link 'PRODUCT ON SALE Spire Mini DisplayPort Male to HDMI Male Converter, 1 Metre', clickable, visible
+					StaticText 'PRODUCT ON SALE'
+					[441] image 'Spire Mini DisplayPort Male to HDMI Male Converter, 1 Metre', visible
+				[442] heading 'Spire Mini DisplayPort Male to HDMI Male Converter, 1 Metre', visible
+					[443] link 'Spire Mini DisplayPort Male to HDMI Male Converter, 1 Metre', clickable, visible
+				StaticText 'Original price was: €8.00.'
+				StaticText 'Current price is: €6.99.'
+				[456] link '\ue906', clickable, visible
+					StaticText '\ue906'
+				[458] link '\ue92c', clickable, visible
+					StaticText '\ue92c'
+				[461] link 'Add to cart: “Spire Mini DisplayPort Male to HDMI Male Converter, 1 Metre”', clickable, visible
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+		[467] heading 'Best selling products'
+		[468] list ''
+			[469] listitem ''
+				[471] link 'ADATA 1TB HV620S Slim External Hard Drive, 2.5", USB 3.2, 11.5mm Thick, Black', clickable
+					[472] image 'ADATA 1TB HV620S Slim External Hard Drive, 2.5", USB 3.2, 11.5mm Thick, Black'
+				[473] heading 'ADATA 1TB HV620S Slim External Hard Drive, 2.5″, USB 3.2, 11.5mm Thick, Black'
+					[474] link 'ADATA 1TB HV620S Slim External Hard Drive, 2.5″, USB 3.2, 11.5mm Thick, Black', clickable
+				StaticText '€'
+				StaticText '56.00'
+				[480] link '\ue906', clickable
+					StaticText '\ue906'
+				[482] link '\ue92c', clickable
+					StaticText '\ue92c'
+				[485] link 'Add to cart: “ADATA 1TB HV620S Slim External Hard Drive, 2.5", USB 3.2, 11.5mm Thick, Black”', clickable
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[489] listitem ''
+				[491] link 'Corsair 3500X Gaming Case w/ Glass Side &amp; Front, E-ATX, No Fans, USB-C, Asus BTF Compatible, White', clickable
+					[492] image 'Corsair 3500X Gaming Case w/ Glass Side &amp; Front, E-ATX, No Fans, USB-C, Asus BTF Compatible, White'
+				[493] heading 'Corsair 3500X Gaming Case w/ Glass Side &amp; Front, E-ATX, No Fans, USB-C, Asus BTF Compatible, White'
+					[494] link 'Corsair 3500X Gaming Case w/ Glass Side &amp; Front, E-ATX, No Fans, USB-C, Asus BTF Compatible, White', clickable
+				StaticText '€'
+				StaticText '76.91'
+				[500] link '\ue906', clickable
+					StaticText '\ue906'
+				[502] link '\ue92c', clickable
+					StaticText '\ue92c'
+				[505] link 'Add to cart: “Corsair 3500X Gaming Case w/ Glass Side &amp; Front, E-ATX, No Fans, USB-C, Asus BTF Compatible, White”', clickable
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[509] listitem ''
+				[511] link 'Netac Z Slim 1TB M.2 External SSD, USB 3.2 Gen2 Type-C, Up to 550MB/s, Aluminium', clickable
+					[512] image 'Netac Z Slim 1TB M.2 External SSD, USB 3.2 Gen2 Type-C, Up to 550MB/s, Aluminium'
+				[513] heading 'Netac Z Slim 1TB M.2 External SSD, USB 3.2 Gen2 Type-C, Up to 550MB/s, Aluminium'
+					[514] link 'Netac Z Slim 1TB M.2 External SSD, USB 3.2 Gen2 Type-C, Up to 550MB/s, Aluminium', clickable
+				StaticText '€'
+				StaticText '66.00'
+				[520] link '\ue906', clickable
+					StaticText '\ue906'
+				[522] link '\ue92c', clickable
+					StaticText '\ue92c'
+				[525] link 'Add to cart: “Netac Z Slim 1TB M.2 External SSD, USB 3.2 Gen2 Type-C, Up to 550MB/s, Aluminium”', clickable
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[529] listitem ''
+				[531] link 'FSP Hydro Pro K 600W Non-Modular PSU', clickable
+					[532] image 'FSP Hydro Pro K 600W Non-Modular PSU'
+				[533] heading 'FSP Hydro Pro K 600W Non-Modular PSU'
+					[534] link 'FSP Hydro Pro K 600W Non-Modular PSU', clickable
+				StaticText '€'
+				StaticText '53.95'
+				[540] link '\ue906', clickable
+					StaticText '\ue906'
+				[542] link '\ue92c', clickable
+					StaticText '\ue92c'
+				[545] link 'Add to cart: “FSP Hydro Pro K 600W Non-Modular PSU”', clickable
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+			[549] listitem ''
+				[551] link 'Be Quiet! Pure Base 500 Gaming Case with Window, ATX, 2 x Pure Wings 2 Fans, PSU Shroud, Black', clickable
+					[552] image 'Be Quiet! Pure Base 500 Gaming Case with Window, ATX, 2 x Pure Wings 2 Fans, PSU Shroud, Black'
+				[553] heading 'Be Quiet! Pure Base 500 Gaming Case with Window, ATX, 2 x Pure Wings 2 Fans, PSU Shroud, Black'
+					[554] link 'Be Quiet! Pure Base 500 Gaming Case with Window, ATX, 2 x Pure Wings 2 Fans, PSU Shroud, Black', clickable
+				StaticText '€'
+				StaticText '77.56'
+				[560] link '\ue906', clickable
+					StaticText '\ue906'
+				[562] link '\ue92c', clickable
+					StaticText '\ue92c'
+				[565] link 'Add to cart: “Be Quiet! Pure Base 500 Gaming Case with Window, ATX, 2 x Pure Wings 2 Fans, PSU Shroud, Black”', clickable
+					StaticText 'Add to cart'
+				StaticText '\ue91b'
+		[572] image ''
+		[575] paragraph ''
+			[576] link 'All Products', clickable
+		[577] paragraph ''
+			StaticText '/'
+	[578] contentinfo ''
+		[584] Section ''
+			[585] paragraph ''
+				StaticText 'Categories'
+		[586] Section ''
+			[588] list ''
+				[589] listitem ''
+					[590] link 'Notebooks & Stationery', clickable
+						StaticText 'Notebooks & Stationery'
+				[592] listitem ''
+					[593] link 'Peripherals', clickable
+						StaticText 'Peripherals'
+					[595] list ''
+						[596] listitem ''
+							[597] link 'Mouse Pads', clickable
+								StaticText 'Mouse Pads'
+				[599] listitem ''
+					[600] link 'Watch Straps', clickable
+						StaticText 'Watch Straps'
+				[602] listitem ''
+					[603] link 'Audio', clickable
+						StaticText 'Audio'
+					[605] list ''
+						[606] listitem ''
+							[607] link 'Headphones', clickable
+								StaticText 'Headphones'
+							[609] list ''
+								[610] listitem ''
+									[611] link 'Over-Ear', clickable
+										StaticText 'Over-Ear'
+				[613] listitem ''
+					[614] link 'Gaming', clickable
+						StaticText 'Gaming'
+					[616] list ''
+						[617] listitem ''
+							[618] link 'Microsoft Xbox', clickable
+								StaticText 'Microsoft Xbox'
+							[620] list ''
+								[621] listitem ''
+									[622] link 'Xbox Accessories', clickable
+										StaticText 'Xbox Accessories'
+				[624] listitem ''
+					[625] link 'Hardware', clickable
+						StaticText 'Hardware'
+					[627] list ''
+						[628] listitem ''
+							[629] link 'Cables', clickable
+								StaticText 'Cables'
+							[631] list ''
+								[632] listitem ''
+									[633] link 'HDMI', clickable
+										StaticText 'HDMI'
+								[635] listitem ''
+									[636] link 'USB-C to Lightning', clickable
+										StaticText 'USB-C to Lightning'
+						[638] listitem ''
+							[639] link 'Cleaning Supplies', clickable
+								StaticText 'Cleaning Supplies'
+						[641] listitem ''
+							[642] link 'Networking Equipment', clickable
+								StaticText 'Networking Equipment'
+						[644] listitem ''
+							[645] link 'PC Components', clickable
+								StaticText 'PC Components'
+							[647] list ''
+								[648] listitem ''
+									[649] link 'Adapters', clickable
+										StaticText 'Adapters'
+								[651] listitem ''
+									[652] link 'Barebone PCs', clickable
+										StaticText 'Barebone PCs'
+								[654] listitem ''
+									[655] link 'Cables', clickable
+										StaticText 'Cables'
+								[657] listitem ''
+									[658] link 'Capture Cards', clickable
+										StaticText 'Capture Cards'
+								[660] listitem ''
+									[661] link 'Cases', clickable
+										StaticText 'Cases'
+								[663] listitem ''
+									[664] link 'Cooling', clickable
+										StaticText 'Cooling'
+								[666] listitem ''
+									[667] link 'External Hard Drives', clickable
+										StaticText 'External Hard Drives'
+								[669] listitem ''
+									[670] link 'Graphics Cards', clickable
+										StaticText 'Graphics Cards'
+								[672] listitem ''
+									[673] link 'Keyboards', clickable
+										StaticText 'Keyboards'
+								[675] listitem ''
+									[676] link 'Memory', clickable
+										StaticText 'Memory'
+								[678] listitem ''
+									[679] link 'Mini PCs', clickable
+										StaticText 'Mini PCs'
+								[681] listitem ''
+									[682] link 'Monitors', clickable
+										StaticText 'Monitors'
+								[684] listitem ''
+									[685] link 'Motherboards', clickable
+										StaticText 'Motherboards'
+								[687] listitem ''
+									[688] link 'Networking Equipment', clickable
+										StaticText 'Networking Equipment'
+								[690] listitem ''
+									[691] link 'Power Supplies', clickable
+										StaticText 'Power Supplies'
+								[693] listitem ''
+									[694] link 'Processors', clickable
+										StaticText 'Processors'
+								[696] listitem ''
+									[697] link 'CPU', clickable
+										StaticText 'CPU'
+								[699] listitem ''
+									[700] link 'SSD', clickable
+										StaticText 'SSD'
+				[702] listitem ''
+					[703] link 'Photography', clickable
+						StaticText 'Photography'
+					[705] list ''
+						[706] listitem ''
+							[707] link 'Canon', clickable
+								StaticText 'Canon'
+							[709] list ''
+								[710] listitem ''
+									[711] link 'Cameras', clickable
+										StaticText 'Cameras'
+				[713] listitem ''
+					[714] link 'Smartphones', clickable
+						StaticText 'Smartphones'
+					[716] list ''
+						[717] listitem ''
+							[718] link 'A Series', clickable
+								StaticText 'A Series'
+						[720] listitem ''
+							[721] link 'Apple Watches', clickable
+								StaticText 'Apple Watches'
+						[723] listitem ''
+							[724] link 'S Series', clickable
+								StaticText 'S Series'
+						[726] listitem ''
+							[727] link 'Smartwatch Equipment', clickable
+								StaticText 'Smartwatch Equipment'
+				[729] listitem ''
+					[730] link 'Tablets', clickable
+						StaticText 'Tablets'
+					[732] list ''
+						[733] listitem ''
+							[734] link 'A Series', clickable
+								StaticText 'A Series'
+		[737] Section ''
+			[738] paragraph ''
+				StaticText 'Contact'
+		[739] Section ''
+			[740] paragraph ''
+				[741] strong ''
+					StaticText 'TechTalk'
+				StaticText '1450 Innovation Drive, Suite 200'
+				StaticText 'San Mateo, CA 94401'
+				StaticText 'United States'
+		[745] Section ''
+			[746] paragraph ''
+				[747] image '📞'
+				StaticText '+1 (650) 555-0199'
+				[749] image '✉️'
+				StaticText ''
+				StaticText 'support@techtalk.com'
+		[755] link 'A theme by GradientThemes - A theme by Gradient Themes ©', clickable
+	[758] image '', visible
+	[812] generic, live='assertive', atomic, relevant='additions text'
+	[813] generic, live='polite', atomic, relevant='additions text'
+	[814] status '', live='polite', atomic, relevant='additions text'
+
+## Focused element:
+bid='234'
+
+
+# History of interaction with the task:
+
+## step 0
+
+<think>
+<action>
+new_tab()
+</action>
+</think>
+
+<action>
+new_tab()
+</action>
+
+## step 1
+
+<think>
+<action>
+goto("https://webmall-1.informatik.uni-mannheim.de")
+</action>
+</think>
+
+<action>
+goto("https://webmall-1.informatik.uni-mannheim.de")
+</action>
+
+## step 2
+
+<think>
+<action>
+goto("https://webmall-1.informatik.uni-mannheim.de/")
+</action>
+</think>
+
+<action>
+goto("https://webmall-1.informatik.uni-mannheim.de/")
+</action>
+
+## step 3
+
+<think>
+<action>
+fill('223', 'Asrock B550 PHANTOM GAMING 4')
+</action>
+</think>
+
+<action>
+fill('223', 'Asrock B550 PHANTOM GAMING 4')
+</action>
+
+## step 4
+
+<think>
+<action>
+click('224')
+</action>
+</think>
+
+<action>
+click('224')
+</action>
+
+## step 5
+
+<think>
+I have searched for "Asrock B550 PHANTOM GAMING 4" on E-Store Athletes (webmall-1) and found no results. I need to continue searching on the other webshops. The next webshop in the list is TechTalk (https://webmall-2.informatik.uni-mannheim.de). I will navigate to this webshop in the current active tab (Tab 1).
+</think>
+
+<action>
+goto("https://webmall-2.informatik.uni-mannheim.de")
+</action>
+
+## step 6
+
+<think>
+<action>
+fill('234', 'Asrock B550 PHANTOM GAMING 4')
+</action>
+</think>
+
+<action>
+fill('234', 'Asrock B550 PHANTOM GAMING 4')
+</action>
+
+# Action space:
+Note: This action set allows you to interact with your environment. Most of them
+are python function executing playwright code. The primary way of referring to
+elements in the page is through bid which are specified in your observations.
+
+
+15 different types of actions are available.
+
+noop(wait_ms: float = 1000)
+scroll(delta_x: float, delta_y: float)
+keyboard_press(key: str)
+click(bid: str, button: Literal['left', 'middle', 'right'] = 'left', modifiers: list[typing.Literal['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']] = [])
+fill(bid: str, value: str)
+hover(bid: str)
+tab_focus(index: int)
+new_tab()
+go_back()
+go_forward()
+goto(url: str)
+tab_close()
+select_option(bid: str, options: str | list[str])
+send_msg_to_user(text: str)
+report_infeasible(reason: str)
+Only a single action can be provided at once. Example:
+fill('a12', 'example with "quotes"')
+
+Note:
+* Some tasks may be game like and may require to interact with the mouse position
+in x, y coordinates.
+* Some text field might have auto completion. To see it, you have to type a few
+characters and wait until next step.
+* If you have to cut and paste, don't forget to select the text first.
+* Coordinate inside an SVG are relative to it's top left corner.
+* Make sure to use bid to identify elements when using commands.
+* Interacting with combobox, dropdowns and auto-complete fields can be tricky,
+sometimes you need to use select_option, while other times you need to use fill
+or click and wait for the reaction of the page.
+
+# Structured Memory
+
+You have access to a categorized memory system to store and retrieve information.
+
+## How to Use Memory:
+
+While responding with an action in the <action> tag, you can simultaneously add or retrieve memories. But you have to provide an action tag with an action in your response.
+If you want to manage memory, use the following XML tags:
+
+<memory_add><category>CategoryName</category><info>Your information here</info></memory_add>
+
+# Current Memory Statistics
+## Product_Info:
+  (empty)
+## Search_Queries:
+  (empty)
+## Additional_Notes:
+  (empty)
+
+
+# Abstract Example
+
+Here is an abstract version of the answer with description of the content of
+each tag. Make sure you follow this structure, but replace the content with your
+answer:
+
+<think>
+Think step by step. If you need to make calculations such as coordinates, write them here. Describe the effect
+that your previous action had on the current content of the page.
+</think>
+
+<memory_add><category>Product_Info</category><info>Description of what to remember for this product in order to achieve the task goal</info></memory_add>
+
+<memory_add><category>Search_Queries</category><info>What was the search query you used on a certain webshop. In order to achieve the task goal</info></memory_add>
+<memory_add><category>Additional_Notes</category><info>Any other relevant information that doesn't fit into the predefined categories that could be importaant in order to achieve the task goal. This can be information about the webpages. About product categories, about the checkout, product cart.</info></memory_add>
+
+<action>
+One single action to be executed. You can only use one action at a time.
+</action>
+
+
+# Concrete Example
+
+Here is a concrete example of how to format your answer.
+Make sure to follow the template with proper tags:
+
+<think>
+From previous action I tried to set the value of year to "2022",
+using select_option, but it doesn't appear to be in the form. It may be a
+dynamic dropdown, I will try using click with the bid "a324" and look at the
+response from the page.
+</think>
+
+
+<memory_add><category>Product_Info</category><info>Stellar Quantum Blender Pro 3000, Silver - 1200W, 8 Speed Settings https://example-shop-1.com/products/stellar-quantum-blender-pro-3000-silver</info></memory_add>
+<memory_add><category>Product_Info</category><info>NovaTech UltraFlex Wireless Headphones, Black - Noise Cancelling, 40h Battery https://example-shop-2.com/items/novatech-ultraflex-wireless-headphones-black</info></memory_add>
+
+<memory_add><category>Search_Queries</category><info>Search Query "wireless headphones" on https://example-shop-1.com/search?q=wireless+headphones&category=electronics</info></memory_add>
+<memory_add><category>Search_Queries</category><info>Search Query "blender kitchen" on https://example-shop-2.com/?s=blender+kitchen&type=appliances</info></memory_add>
+
+<memory_add><category>Additional_Notes</category><info>Any other relevant information that doesn't fit into the predefined categories that could be importaant in order to achieve the task goal. This can be information about the webpages. About product categories, about the checkout, product cart.</info></memory_add>
+
+<action>
+click('a324')
+</action>
+
+
+================================================================================
+END OF PROMPT
+================================================================================

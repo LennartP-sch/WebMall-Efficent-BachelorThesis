@@ -1,0 +1,6 @@
+Prompt Tracking Summary
+================================================================================
+
+Run Name: run_20251124_131235
+Total Prompts Saved: 17
+Output Directory: prompt_logs\run_20251124_131235
