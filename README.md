@@ -21,7 +21,7 @@ This algorithm simplifies the accessibility tree by:
 
 ---
 
-### 2. Auxiliary Model Pruning (GF)
+### 2. Auxiliary Model Pruning (AUX)
 
 **Implementation:** 
 - Core logic: `tebtoverrides/aux_model_pruning.py` → `AuxModelPruner` class
