@@ -1,3 +1,87 @@
+# Achieving High Cost-Efficiency for Autonomous Web Agents on E-Commerce Platforms
+
+This repository is a fork of the WebMall benchmark. It implements **four complementary optimization strategies** that reduce LLM agent costs while maintaining task performance. All optimization strategies are directly integrated into the GenericAgent workflow.
+
+---
+
+## Optimization Strategies
+
+### 1. Simplifying the Observation Space (SAX)
+
+**Implementation:** `Browsergym/browsergym/core/src/browsergym/utils/obs.py` → `amazon_observation_axtree()`
+
+This algorithm simplifies the accessibility tree by:
+- Removing non-interactive elements (e.g., StaticText, LayoutTable)
+- Filtering unnecessary properties (e.g., focused, autocomplete)
+- Retaining only essential attributes (required, disabled, checked, etc.)
+
+**Flag:** `FLAGS.obs.use_ax_tree_amazon = True`
+
+**Usage:** Set this flag in `run_webmall_study.py` or `run_single_task.py` to enable simplified observation space.
+
+---
+
+### 2. Auxiliary Model Pruning (GF)
+
+**Implementation:** 
+- Core logic: `tebtoverrides/aux_model_pruning.py` → `AuxModelPruner` class
+- Integration: `AgentLab/src/agentlab/agents/dynamic_prompting.py` → `_get_pruner()`
+
+Uses a secondary language model to intelligently prune the accessibility tree based on:
+- Current task goal
+- Agent's previous observations
+
+**Supported APIs:** OpenAI, OpenRouter, Google AI Studio
+
+**Flags:**
+- `FLAGS.obs.use_model_ax_tree = True` (auxiliary model only)
+- `FLAGS.obs.use_amazone_and_model_ax_tree = True` (combined with SAX)
+
+**Configuration:** Set your auxiliary model in `_get_pruner()` method in `dynamic_prompting.py`.
+
+---
+
+### 3. Prompt Optimization for Prefix Caching (AP)
+
+**Implementation:** `AgentLab/src/agentlab/agents/generic_agent/generic_agent_prompt.py` → `MainPrompt` class
+
+Restructures the prompt to maximize LLM provider prefix caching:
+- Places static content (instructions, action descriptions, hints) at the beginning
+- Groups dynamic content (observations, history) together
+- Increases cache hit rate across multiple turns
+
+**Flags:**
+- `FLAGS.adjusted_prompt_for_caching = True` (for non-memory agents)
+- `FLAGS.adjusted_prompt_for_caching_am = True` (for memory-enabled agents)
+
+---
+
+### 4. Structured Short-Term Memory (AM)
+
+**Implementation:** `AgentLab/src/agentlab/agents/generic_agent/generic_agent_prompt.py` → `StructuredMemory` class
+
+Replaces the default memory with a category-based XML memory system:
+- **Categories:** `Product_Info`, `Search_Queries`, `Additional_Notes`
+- **XML Interface:** Agents use `<memory_add>` tags to store information
+- **Persistent:** Memory is maintained across agent steps
+
+**Flag:** `FLAGS.use_structured_memory = True`
+
+**Workflow Integration:** Automatically instantiated in `generic_agent.py` when flag is enabled.
+
+---
+
+## Task Subsets
+
+WebMall includes two evaluation task sets, defined in `webmall_overrides/configs.py`:
+
+- **`webmall_short_basic`**: Basic e-commerce tasks (searching, comparing, checkout)
+- **`webmall_short_advanced`**: Advanced tasks (vague requirements, compatible/substitute products)
+
+Configure the task set in `run_webmall_study.py` by setting the `benchmark` variable.
+
+
+
 # WebMall - A Multi-Shop Benchmark for Evaluating Web Agents
 
 🌐 [WebMall Website](https://wbsg-uni-mannheim.github.io/WebMall/)  

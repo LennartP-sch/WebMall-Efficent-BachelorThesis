@@ -82,7 +82,6 @@ FLAGS_AX_M = FLAGS_default.copy()
 FLAGS_AX_M.use_memory = True
 
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
-FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = False
 FLAGS_AX_ADV_M.obs.use_ax_tree_amazon = True
 
 FLAGSTEST = FLAGS_AX_M.copy()
@@ -92,7 +91,6 @@ FLAGS_AX_M_CACHED = FLAGS_AX_M.copy()
 FLAGS_AX_M_CACHED.adjusted_prompt_for_caching = True
 
 FLAGS_AX_COPY_M = FLAGS_AX_M.copy()
-FLAGS_AX_COPY_M.obs.use_ax_tree_advanced = False
 FLAGS_AX_COPY_M.obs.use_ax_tree_amazon = True
 
 FLAGS_AX_LLM_M = FLAGS_AX_M.copy()
@@ -109,7 +107,7 @@ FLAGS_HTML = FLAGS_default.copy()
 FLAGS_HTML.obs.use_html = True 
 FLAGS_HTML.obs.use_prune_advanced = True
 FLAGS_HTML.obs.use_ax_tree = False
-#FLAGS_HTML.extra_instructions = ("YOU HAVE ONLY 30 STEPS TO COMPLETE THE TASK, PLAN ACCORDINGLY. IF YOU EXCEED 30 STEPS, THE TASK WILL END AUTOMATICALLY WITH NO SUBMITTED ANSWER. SO SUBMIT YOUR BEST POSSIBLE ANSWER IN STEP 30. Always answer only with one <action> xxx </action> tag, never multiple action tags. ")
+
 
 AGENT_41_AX_M_CACHED = GenericAgentArgs(
     chat_model_args=CHAT_MODEL_ARGS_DICT["openai/gpt-4.1-2025-04-14"],
@@ -238,9 +236,6 @@ AGENT_GEMINI_2_5_AX_AM_CACHED = GenericAgentArgs(
 )
 
 
-#webmall.Webmall_Cheapest_Offer_Vague_Requirements_Task1_15
-#Webmall_Cheapest_Offer_Specific_Requirements_Task3
-
 # example for a single task
 env_args = EnvArgsWebMall(
     task_name="webmall.Webmall_Find_Specific_Product_Task7",
@@ -277,15 +272,6 @@ exp_args = [
 current_file = Path(__file__).resolve()
 PATH_TO_DOT_ENV_FILE = current_file.parent / ".env"
 load_dotenv(PATH_TO_DOT_ENV_FILE)
-
-# ============================================================================
-# ENABLE ACCESSIBILITY TREE EXTRACTION (Optional)
-# ============================================================================
-# Uncomment these lines to enable extraction of accessibility trees with token counts:
-import os
-os.environ["EXTRACT_AXTREE_OBSERVATIONS"] = "true"
-# os.environ["AXTREE_OUTPUT_DIR"] = "axtree_observations"  # Optional: custom output directory
-# ============================================================================
 
 if __name__ == "__main__":
     run_experiments(n_jobs=1, exp_args_list=exp_args, study_dir="task_results", parallel_backend="sequential")

@@ -351,6 +351,7 @@ WEBMALL_BENCHMARKS = {
         ),
         task_metadata=task_metadata("webmall"),
     ),
+    #Basic Task Subset
     "webmall_short_basic": lambda: WebMallBenchmark(
         name="webmall_short_basic",
         high_level_action_set_args=DEFAULT_HIGHLEVEL_ACTION_SET_ARGS["webarena"],
@@ -382,6 +383,7 @@ WEBMALL_BENCHMARKS = {
         ),
         task_metadata=task_metadata("webmall"),
     ),
+    #Advanced Task Subset
     "webmall_short_advanced": lambda: WebMallBenchmark(
         name="webmall_short_advanced",
         high_level_action_set_args=DEFAULT_HIGHLEVEL_ACTION_SET_ARGS["webarena"],

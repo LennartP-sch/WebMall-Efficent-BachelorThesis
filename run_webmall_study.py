@@ -76,7 +76,6 @@ FLAGS_AX_M.use_memory = True
 
 #PRUNNED AX
 FLAGS_AX_ADV_M = FLAGS_AX_M.copy()
-FLAGS_AX_ADV_M.obs.use_ax_tree_advanced = False
 FLAGS_AX_ADV_M.obs.use_ax_tree_amazon = True
 
 #AX-AM (Adjusted Memory)
