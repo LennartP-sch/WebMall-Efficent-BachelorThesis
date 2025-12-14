@@ -418,7 +418,7 @@ WEBMALL_BENCHMARKS = {
         ),
         task_metadata=task_metadata("webmall"),
     ),
-    "retry": lambda: WebMallBenchmark(
+    "test": lambda: WebMallBenchmark(
         name="test",
         high_level_action_set_args=DEFAULT_HIGHLEVEL_ACTION_SET_ARGS["webarena"],
         is_multi_tab=True,

@@ -2,6 +2,8 @@
 
 This repository is a fork of the WebMall benchmark. It implements **four complementary optimization strategies** that reduce LLM agent costs while maintaining task performance. All optimization strategies are directly integrated into the GenericAgent workflow.
 
+The experiments were conducted using the packages from `packages.txt` on Windows 11.
+
 ---
 
 ## Optimization Strategies

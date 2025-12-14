@@ -100,7 +100,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
         self.total_output_tokens = 0
         self.total_cached_tokens = 0
 
-        # ✅ NEU: Stats-Datei für Ray Multi-Processing
+        
         self.stats_file = Path(os.getenv('AGENTLAB_EXP_ROOT', '.')) / 'aux_pruning_stats_temp.json'
 
         # Initialize API clients
@@ -112,7 +112,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
                     raise ValueError("GEMINI_2nd_KEY environment variable not set")
                 genai.configure(api_key=api_key)
                 self.genai_client = genai.GenerativeModel(model_name)
-                logger.info(f"[OK] Google AI Studio client initialized: {model_name}")  # ✅ Kein Emoji
+                logger.info(f"[OK] Google AI Studio client initialized: {model_name}")
             except Exception as e:
                 logger.error(f"[ERROR] Failed to initialize Google AI client: {e}")
                 raise
@@ -126,7 +126,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
                     base_url="https://openrouter.ai/api/v1",
                     api_key=api_key,
                 )
-                logger.info(f"[OK] OpenRouter client initialized: {model_name}")  # ✅ Kein Emoji
+                logger.info(f"[OK] OpenRouter client initialized: {model_name}")  
             except Exception as e:
                 logger.error(f"[ERROR] Failed to initialize OpenRouter client: {e}")
                 raise
@@ -134,7 +134,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
             try:
                 from openai import OpenAI
                 self.openai_client = OpenAI()
-                logger.info(f"[OK] OpenAI client initialized: {model_name}")  # ✅ Kein Emoji
+                logger.info(f"[OK] OpenAI client initialized: {model_name}") 
             except Exception as e:
                 logger.error(f"[ERROR] Failed to initialize OpenAI client: {e}")
                 raise
@@ -166,7 +166,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
                     ],
-                    temperature=0.0,
+                    temperature=0.1,
                 )
 
                 llm_response = response.choices[0].message.content
@@ -193,7 +193,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
 
             api_type = "Google AI" if self.use_google_ai else ("OpenRouter" if self.use_openrouter else "OpenAI")
             
-            # ✅ GEÄNDERT: Keine Emojis mehr!
+            
             logger.info(
                 f"[LLM] Call #{self.call_count} ({api_type}) - Model: {self.model_name} | "
                 f"Input: {token_usage['input_tokens']} | "
@@ -202,7 +202,7 @@ that is irrelevant to reduce the size of the observation and all the distraction
                 f"Cached: {token_usage['cached_tokens']} tokens"
             )
 
-            # ✅ NEU: Schreibe Stats nach jedem Call
+            
             self._save_stats_to_file()
 
             return llm_response, token_usage
@@ -217,8 +217,6 @@ that is irrelevant to reduce the size of the observation and all the distraction
         stats['pid'] = os.getpid()  # Process ID für Ray Workers
 
         try:
-            # ✅ Windows-kompatibel: Verwende einfaches File I/O
-            # Ray isoliert die Worker, also ist Race Condition unwahrscheinlich
             
             # Lese existierende Stats
             all_stats = {}
@@ -467,8 +465,8 @@ def aux_model_pruning(
     goal: str,
     url: str,
     chatmessages,  # ← Chat Historie (nicht nützlich)
-    actions=None,  # ✅ NEU: Bisherige Actions
-    thoughts=None,  # ✅ NEU: Bisherige Thoughts/Reasonings
+    actions=None,  
+    thoughts=None,  
     model_name: str = "deepseek/deepseek-chat-v3.1:free",
     use_openrouter: bool = True,
     use_google_ai: bool = False,
@@ -519,7 +517,7 @@ def aux_model_pruning(
     task_match = re.search(r'<task>(.*?)</task>', goal, re.DOTALL | re.IGNORECASE)    
     goal = task_match.group(1).strip() if task_match else goal
 
-    # ✅ DEBUG: Print Actions und Thoughts
+    
     #print("\n" + "=" * 100)
     #print("🔍 ACTIONS & THOUGHTS DEBUG")
     #print("=" * 100)
@@ -543,7 +541,7 @@ def aux_model_pruning(
     
     #print("=" * 100 + "\n")
 
-    # ✅ Verwende letztes Thought oder letzte Action
+    
     #last_context = ""
     
     if thoughts and len(thoughts) > 0:

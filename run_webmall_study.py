@@ -403,15 +403,16 @@ agents_to_run = [
 
 # choose your agent
 # Start with AGENT_GPT_41_AX_ADV_M
-agent_args = [AGENT_GPT_41_CACHED_AX_ADV_CACHED] 
+agent_args = [AGENT_GEMINI_2_5_PRO_AX_ADV_LLM_M] 
 
 #For each agent in agents_to_run, run webmall_short_basic and webmall_short_advanced
 
-benchmark = "retry"
+benchmark = "test"
 #benchmark = "webmall_short_basic"
 #benchmark = "webmall_short_advanced"
 
 ## Number of parallel jobs
+# When using the auxiliary model pruning, it is recommended to use n_jobs = 1
 n_jobs = 1 
 # n_jobs = -1  # to use all available cores
 
